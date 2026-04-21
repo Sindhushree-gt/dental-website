@@ -25,6 +25,8 @@ const Home = () => {
         access_key: '8f11e73a-2e5f-4578-bb73-52c99d93155f',
         subject: `Contact Inquiry: ${contactData.firstName} ${contactData.lastName}`,
         from_name: 'SmileVista Dental Website',
+        confirm_email: 'true',
+        replyto: 'cursorhalesh@gmail.com',
         ...contactData
       });
       setSubmitted(true);

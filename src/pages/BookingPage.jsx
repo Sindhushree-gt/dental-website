@@ -50,6 +50,8 @@ const BookingPage = () => {
         access_key: '8f11e73a-2e5f-4578-bb73-52c99d93155f',
         subject: `New Appointment Booking: ${formData.name}`,
         from_name: 'SmileVista Dental',
+        confirm_email: 'true',
+        replyto: 'cursorhalesh@gmail.com',
         ...formData
       };
       
