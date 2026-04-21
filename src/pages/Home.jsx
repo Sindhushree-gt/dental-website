@@ -5,40 +5,142 @@ const Home = () => {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <header className="relative min-h-[90vh] flex items-center px-6 md:px-20 overflow-hidden bg-teal-950">
+      <header className="relative min-h-[90vh] flex items-center px-6 md:px-20 overflow-hidden bg-[color:var(--deep)]">
         <img 
           src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1800&q=85" 
           alt="Clinic" 
-          className="absolute inset-0 w-full h-full object-cover opacity-40 brightness-50"
+          className="absolute inset-0 w-full h-full object-cover opacity-35 brightness-50"
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--deep)]/95 via-[color:var(--deep)]/80 to-[color:var(--deep)]/10" />
         <div className="relative z-10 max-w-3xl text-white">
-          <div className="inline-block bg-teal-500/20 border border-teal-500/30 text-teal-400 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-8">
+          <div className="inline-block bg-[color:var(--teal)]/20 border border-[color:var(--teal)]/30 text-[#C9A24A] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-8">
             International Centre of Excellence
           </div>
           <h1 className="text-6xl md:text-8xl font-serif font-bold leading-[1.1] mb-6">
             Where Perfect <br />
-            <span className="italic text-teal-400">Smiles</span> Are Crafted
+            <span className="italic text-[#C9A24A]">Smiles</span> Are Crafted
           </h1>
-          <p className="text-xl text-teal-50/70 mb-12 max-w-2xl leading-relaxed">
-            Advanced dentistry for patients worldwide. Precision technology, accredited expertise, and genuine compassion from consultation to your new smile.
+          <p className="text-xl text-white/70 mb-12 max-w-2xl leading-relaxed">
+            Advanced dentistry for patients worldwide. Precision technology, accredited expertise, and genuine compassion — from consultation to your confident new smile.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Link to="/booking" className="bg-teal-500 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-teal-600 transition-all shadow-xl shadow-teal-900/40 active:scale-95">
+            <Link to="/booking" className="bg-[color:var(--teal)] text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-[color:var(--dk)] transition-all shadow-xl shadow-black/30 active:scale-95">
               Book Free Consultation
             </Link>
-            <Link to="/smile-designing" className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-white/20 transition-all no-underline">
+            <Link to="/smile-designing" className="bg-white/10 backdrop-blur-md border border-white/25 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-white/15 transition-all no-underline">
               View Our Services
             </Link>
+          </div>
+
+          <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-8 max-w-2xl">
+            {[
+              { n: '25K+', l: 'Happy Patients' },
+              { n: '40+', l: 'Countries' },
+              { n: '18 yrs', l: 'Excellence' },
+              { n: '4.9★', l: 'Rating' }
+            ].map((s) => (
+              <div key={s.l}>
+                <div className="font-serif text-3xl text-[#C9A24A] font-bold leading-none">{s.n}</div>
+                <div className="text-xs tracking-wide uppercase text-white/50 mt-2">{s.l}</div>
+              </div>
+            ))}
           </div>
         </div>
       </header>
 
+      {/* Trust Bar */}
+      <section className="bg-[color:var(--soft)] border-y border-black/5 px-6 py-6">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-x-12 gap-y-4 text-sm text-[color:var(--muted)]">
+          {[
+            { t: 'JCI Accredited', d: 'Facility' },
+            { t: 'ISO 9001:2015', d: 'Certified' },
+            { t: '15+', d: 'Specialist Doctors' },
+            { t: '40+ Countries', d: 'International Patients' },
+            { t: 'Same‑Day', d: 'Emergency Care' }
+          ].map((x) => (
+            <div key={x.t} className="flex items-center gap-2">
+              <span className="inline-flex w-2 h-2 rounded-full bg-[color:var(--teal)]" />
+              <span>
+                <span className="font-bold text-[color:var(--txt)]">{x.t}</span> {x.d}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* About Split */}
+      <section className="grid lg:grid-cols-2">
+        <div className="relative min-h-[420px] overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1588776814546-1ffbb3b89fd1?w=1400&q=85"
+            alt="Dentist consulting with patient"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
+          <div className="absolute bottom-6 left-6 bg-white/95 rounded-2xl px-6 py-5 shadow-2xl">
+            <div className="font-serif text-4xl font-bold text-[color:var(--teal)] leading-none">18+</div>
+            <div className="text-sm text-[color:var(--muted)] mt-1">Years of international excellence</div>
+          </div>
+        </div>
+        <div className="bg-[color:var(--bg)] px-6 py-20 lg:px-16 flex items-center">
+          <div className="max-w-xl">
+            <div className="text-xs font-bold tracking-[0.3em] uppercase text-[color:var(--teal)] mb-4">
+              About SmileVista
+            </div>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[color:var(--dk)] leading-tight">
+              More than a clinic — <br />
+              a <span className="italic text-[color:var(--teal)]">global smile</span> centre
+            </h2>
+            <p className="mt-6 text-[color:var(--muted)] leading-relaxed">
+              Founded by internationally trained specialists, SmileVista combines cutting‑edge technology with genuine warmth. We
+              treat local families and international travelers with the same high‑touch care, from consultation to aftercare.
+            </p>
+
+            <div className="mt-10 grid sm:grid-cols-2 gap-6">
+              {[
+                { i: '🔬', t: '3D Digital Planning', d: 'Preview your smile with CBCT + digital design workflow.' },
+                { i: '🌍', t: 'International Concierge', d: 'Travel, hotel, airport pickup — coordinated end‑to‑end.' },
+                { i: '🛡️', t: 'Lifetime Aftercare', d: 'Remote check‑ins and support after you return home.' },
+                { i: '💤', t: 'Anxiety‑Friendly Care', d: 'Gentle approach with modern comfort options.' }
+              ].map((f) => (
+                <div key={f.t} className="flex gap-4">
+                  <div className="w-11 h-11 rounded-xl bg-[color:var(--soft)] flex items-center justify-center text-lg">
+                    {f.i}
+                  </div>
+                  <div>
+                    <div className="font-bold text-[color:var(--dk)]">{f.t}</div>
+                    <div className="text-sm text-[color:var(--muted)] mt-1 leading-relaxed">{f.d}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Link
+                to="/booking"
+                className="bg-[color:var(--teal)] text-white px-8 py-3 rounded-xl font-bold hover:bg-[color:var(--dk)] transition"
+              >
+                Schedule a Visit →
+              </Link>
+              <Link
+                to="/assessment"
+                className="border-2 border-[color:var(--teal)] text-[color:var(--teal)] px-8 py-3 rounded-xl font-bold hover:bg-[color:var(--soft)] transition"
+              >
+                Take Smile Quiz →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Services Overview */}
-      <section className="py-32 px-6 bg-white">
+      <section className="py-28 px-6 bg-white">
         <div className="max-w-7xl mx-auto text-center mb-20">
-          <span className="text-teal-600 font-bold uppercase tracking-[0.3em] text-sm mb-4 block">International Standards</span>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-teal-900 mb-6">Our Signature Treatments</h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg leading-relaxed">We combine medical precision with aesthetic artistry to deliver world-class dental results.</p>
+          <span className="text-[color:var(--teal)] font-bold uppercase tracking-[0.3em] text-sm mb-4 block">International Standards</span>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-[color:var(--dk)] mb-6">Our Signature Treatments</h2>
+          <p className="text-[color:var(--muted)] max-w-2xl mx-auto text-lg leading-relaxed">
+            From routine care to full smile transformations — every treatment delivered with precision, compassion, and accredited standards.
+          </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-7xl mx-auto">
@@ -47,17 +149,312 @@ const Home = () => {
             { title: "Aligners & Braces", path: "/aligners-braces", icon: "🔮", desc: "Invisible correction for perfectly aligned teeth." },
             { title: "Dental Implants", path: "/dental-implants", icon: "🦷", desc: "Permanent, natural-feeling tooth replacements." }
           ].map((service, i) => (
-            <Link key={i} to={service.path} className="group p-10 bg-slate-50 rounded-[2.5rem] border border-teal-50 hover:bg-white hover:shadow-2xl hover:shadow-teal-900/5 transition-all duration-500 no-underline text-left">
+            <Link
+              key={i}
+              to={service.path}
+              className="group p-10 bg-[color:var(--bg)] rounded-[2.5rem] border border-black/5 hover:bg-white hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 no-underline text-left"
+            >
               <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center text-3xl mb-8 group-hover:scale-110 group-hover:-rotate-6 transition-transform">
                 {service.icon}
               </div>
-              <h3 className="text-2xl font-serif font-bold text-teal-900 mb-4">{service.title}</h3>
-              <p className="text-gray-600 mb-8 leading-relaxed">{service.desc}</p>
-              <div className="text-teal-600 font-bold flex items-center gap-2 group-hover:gap-4 transition-all">
+              <h3 className="text-2xl font-serif font-bold text-[color:var(--dk)] mb-4">{service.title}</h3>
+              <p className="text-[color:var(--muted)] mb-8 leading-relaxed">{service.desc}</p>
+              <div className="text-[color:var(--teal)] font-bold flex items-center gap-2 group-hover:gap-4 transition-all">
                 Learn More <span>→</span>
               </div>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* Doctors */}
+      <section className="py-24 px-6 bg-[color:var(--bg)]">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="text-xs font-bold tracking-[0.3em] uppercase text-[color:var(--teal)] mb-4">Meet the Team</div>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-[color:var(--dk)] mb-6">
+            World‑trained <span className="italic text-[color:var(--teal)]">specialists</span>
+          </h2>
+          <p className="text-[color:var(--muted)] max-w-3xl mx-auto leading-relaxed">
+            Our clinicians hold advanced fellowships and deliver results with a balance of clinical precision and aesthetic artistry.
+          </p>
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-14 grid gap-8 md:grid-cols-3">
+          {[
+            {
+              name: 'Dr. Rohan Mehta',
+              role: 'Founder & Chief Dental Surgeon',
+              tag: 'Oral & Maxillofacial',
+              img: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=900&q=85',
+              exp: '20+ years'
+            },
+            {
+              name: 'Dr. Priya Sharma',
+              role: 'Lead Cosmetic & Aesthetic Dentist',
+              tag: 'Cosmetic & Aesthetic',
+              img: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=900&q=85',
+              exp: '14 years'
+            },
+            {
+              name: 'Dr. Arjun Nair',
+              role: 'Senior Implantologist',
+              tag: 'Implantology',
+              img: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=900&q=85',
+              exp: '16 years'
+            }
+          ].map((d) => (
+            <div key={d.name} className="bg-white rounded-3xl overflow-hidden border border-black/5 shadow-sm hover:shadow-xl hover:shadow-black/5 transition">
+              <div className="relative h-72">
+                <img src={d.img} alt={d.name} className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute top-4 left-4 bg-[color:var(--teal)] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                  {d.tag}
+                </div>
+              </div>
+              <div className="p-8">
+                <div className="font-serif text-2xl font-bold text-[color:var(--dk)]">{d.name}</div>
+                <div className="text-sm text-[color:var(--muted)] mt-1">{d.role}</div>
+                <div className="mt-4 text-sm text-[color:var(--muted)]">
+                  Trained internationally · <span className="font-bold text-[color:var(--teal)]">{d.exp}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Dental Tourism */}
+      <section className="py-24 px-6 bg-[color:var(--soft)]">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-14 items-start">
+          <div>
+            <div className="text-xs font-bold tracking-[0.3em] uppercase text-[color:var(--teal)] mb-4">Medical Tourism</div>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[color:var(--dk)] leading-tight">
+              Your journey to a <br />
+              better <span className="italic text-[color:var(--teal)]">smile</span>
+            </h2>
+            <p className="mt-6 text-[color:var(--muted)] leading-relaxed">
+              Save 40–70% on world‑class dentistry. Our team helps with travel guidance, accommodation partners, and aftercare so you can focus on your treatment.
+            </p>
+            <div className="mt-8 space-y-5">
+              {[
+                { n: '1', t: 'Free virtual consultation', d: 'Share X‑rays/photos. Receive a plan and estimate within 24 hours.' },
+                { n: '2', t: 'Travel & accommodation', d: 'Airport pickup + partner hotels minutes from the clinic.' },
+                { n: '3', t: 'Treatment at SmileVista', d: 'Most multi‑procedure packages completed in 5–10 days.' },
+                { n: '4', t: 'Lifetime remote aftercare', d: 'Digital records and follow‑ups after you return home.' }
+              ].map((s) => (
+                <div key={s.n} className="flex gap-4 border-b border-black/5 pb-5">
+                  <div className="w-11 h-11 rounded-full bg-[color:var(--teal)] text-white font-bold flex items-center justify-center flex-shrink-0">
+                    {s.n}
+                  </div>
+                  <div>
+                    <div className="font-bold text-[color:var(--dk)]">{s.t}</div>
+                    <div className="text-sm text-[color:var(--muted)] mt-1 leading-relaxed">{s.d}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-10">
+              <Link
+                to="/booking"
+                className="bg-[color:var(--teal)] text-white px-8 py-3 rounded-xl font-bold hover:bg-[color:var(--dk)] transition inline-flex"
+              >
+                Plan My Dental Trip →
+              </Link>
+            </div>
+          </div>
+
+          <div className="bg-[color:var(--dk)] rounded-3xl overflow-hidden text-white">
+            <div className="relative h-80">
+              <img
+                src="https://images.unsplash.com/photo-1504439468489-c8920d796a29?w=1400&q=85"
+                alt="International patient smiling at clinic"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/60" />
+            </div>
+            <div className="p-10">
+              <div className="font-serif text-3xl font-bold">Why India for dentistry?</div>
+              <p className="text-white/60 mt-3 leading-relaxed">
+                World‑class outcomes at a fraction of the cost — with doctors trained in leading global institutions.
+              </p>
+              <div className="mt-8 grid grid-cols-2 gap-4">
+                {[
+                  { i: '✈️', t: 'Direct flights', d: 'From UAE, UK, US, AU + more' },
+                  { i: '🏨', t: 'Hotel partners', d: '4★ & 5★ at exclusive rates' },
+                  { i: '👨‍⚕️', t: 'Specialist team', d: 'Cosmetic, implants, aligners' },
+                  { i: '📋', t: 'Visa support', d: 'Documents + medical letter' }
+                ].map((x) => (
+                  <div key={x.t} className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <div className="text-xl">{x.i}</div>
+                    <div className="font-bold mt-2">{x.t}</div>
+                    <div className="text-xs text-white/55 mt-1 leading-relaxed">{x.d}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 rounded-2xl bg-gradient-to-r from-[color:var(--teal)] to-[#6B8F71] p-5 flex items-center gap-4">
+                <div className="font-serif text-5xl font-bold leading-none">70%</div>
+                <div>
+                  <div className="font-bold">Average cost savings</div>
+                  <div className="text-sm text-white/80">vs. equivalent care in UK, USA, or Australia</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Results Preview CTA */}
+      <section className="py-24 px-6 bg-white">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div className="text-xs font-bold tracking-[0.3em] uppercase text-[color:var(--teal)] mb-4">Patient results</div>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[color:var(--dk)] leading-tight">
+              Real smiles, <br />
+              <span className="italic text-[color:var(--teal)]">real transformations</span>
+            </h2>
+            <p className="mt-6 text-[color:var(--muted)] leading-relaxed max-w-xl">
+              See before/after comparisons across smile makeovers, aligners, and implant rehabilitation.
+            </p>
+            <div className="mt-10 flex gap-4 flex-wrap">
+              <Link to="/results" className="bg-[color:var(--teal)] text-white px-8 py-3 rounded-xl font-bold hover:bg-[color:var(--dk)] transition">
+                View Results →
+              </Link>
+              <Link to="/booking" className="border-2 border-[color:var(--teal)] text-[color:var(--teal)] px-8 py-3 rounded-xl font-bold hover:bg-[color:var(--soft)] transition">
+                Get a Quote →
+              </Link>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3 rounded-3xl overflow-hidden shadow-2xl shadow-black/10">
+            <img src="https://images.unsplash.com/photo-1627483262769-04d0a1401487?w=900&q=85" alt="Before" className="h-72 w-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=900&q=85" alt="After" className="h-72 w-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=900&q=85" alt="Before aligners" className="h-72 w-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1513412803932-49f9003a7281?w=900&q=85" alt="After aligners" className="h-72 w-full object-cover" />
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-24 px-6 bg-[color:var(--bg)]">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-end">
+          <div>
+            <div className="text-xs font-bold tracking-[0.3em] uppercase text-[color:var(--teal)] mb-4">Patient stories</div>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[color:var(--dk)] leading-tight">
+              Smiles shared <br />
+              <span className="italic text-[color:var(--teal)]">across the globe</span>
+            </h2>
+          </div>
+          <p className="text-[color:var(--muted)] leading-relaxed">
+            Real patients, real results — from London to Lagos, Sydney to São Paulo. Every smile tells a story of trust.
+          </p>
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-14 grid gap-6 md:grid-cols-3">
+          {[
+            {
+              feat: true,
+              q: '“I flew from Dubai for a full mouth reconstruction. From the first WhatsApp consult to the final fitting, everything was seamless. Worth every hour of travel.”',
+              n: 'Sara Al‑Hamdan',
+              l: 'Dubai, UAE'
+            },
+            {
+              q: '“I dreaded dentists, but here I felt completely at ease. Outstanding quality and value compared to UK prices.”',
+              n: 'James Mitchell',
+              l: 'Manchester, UK'
+            },
+            {
+              q: '“My veneers are perfect. I consulted in three countries — the quality here exceeded all of them at a third of the price.”',
+              n: 'Anna Petrova',
+              l: 'Moscow, Russia'
+            }
+          ].map((t) => (
+            <div
+              key={t.n}
+              className={[
+                'rounded-3xl p-8 border transition',
+                t.feat
+                  ? 'bg-gradient-to-br from-[color:var(--dk)] to-[color:var(--deep)] border-transparent text-white'
+                  : 'bg-white border-black/5 text-[color:var(--txt)] hover:shadow-xl hover:shadow-black/5'
+              ].join(' ')}
+            >
+              <div className={t.feat ? 'text-[#C9A24A]' : 'text-[color:var(--teal)]'}>★★★★★</div>
+              <p className={['mt-4 leading-relaxed', t.feat ? 'text-white/75' : 'text-[color:var(--muted)]'].join(' ')}>
+                {t.q}
+              </p>
+              <div className="mt-6 font-bold">{t.n}</div>
+              <div className={t.feat ? 'text-white/50 text-sm' : 'text-[color:var(--muted)] text-sm'}>{t.l}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Contact CTA */}
+      <section className="py-24 px-6 bg-gradient-to-br from-[color:var(--deep)] to-[color:var(--dk)] text-white">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-14 items-start">
+          <div>
+            <div className="text-xs font-bold tracking-[0.3em] uppercase text-[#C9A24A] mb-4">Get in touch</div>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight">
+              Book your <br />
+              <span className="italic text-[color:var(--teal)]">free consultation</span>
+            </h2>
+            <p className="mt-6 text-white/65 leading-relaxed max-w-xl">
+              Whether local or international, our team creates your personalized plan. First consultations are free and include a complete digital assessment.
+            </p>
+            <div className="mt-10 space-y-4 text-white/80">
+              <div className="flex gap-4 items-start">
+                <div className="w-11 h-11 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">📞</div>
+                <div>
+                  <div className="font-bold text-white">+91 98765 43210</div>
+                  <div className="text-sm text-white/55">Mon–Sat, 9 AM – 8 PM IST</div>
+                </div>
+              </div>
+              <div className="flex gap-4 items-start">
+                <div className="w-11 h-11 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">📧</div>
+                <div>
+                  <div className="font-bold text-white">hello@smilevista.com</div>
+                  <div className="text-sm text-white/55">Response within 2 hours</div>
+                </div>
+              </div>
+              <div className="flex gap-4 items-start">
+                <div className="w-11 h-11 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">📍</div>
+                <div>
+                  <div className="font-bold text-white">Koramangala, Bengaluru, India</div>
+                  <div className="text-sm text-white/55">15 mins from the city center</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-10 text-[color:var(--txt)] border border-white/20 shadow-2xl shadow-black/20">
+            <h3 className="font-serif text-3xl font-bold text-[color:var(--dk)]">Request an appointment</h3>
+            <p className="text-[color:var(--muted)] mt-2">Quick form for demo purposes (your real booking page is still at /booking).</p>
+
+            <div className="mt-8 grid sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wide text-[color:var(--muted)] mb-2">First name</label>
+                <input className="w-full bg-[color:var(--bg)] border border-black/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[color:var(--teal)]" placeholder="Sarah" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wide text-[color:var(--muted)] mb-2">Last name</label>
+                <input className="w-full bg-[color:var(--bg)] border border-black/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[color:var(--teal)]" placeholder="Johnson" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-bold uppercase tracking-wide text-[color:var(--muted)] mb-2">Email</label>
+                <input className="w-full bg-[color:var(--bg)] border border-black/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[color:var(--teal)]" placeholder="sarah@example.com" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-bold uppercase tracking-wide text-[color:var(--muted)] mb-2">Message</label>
+                <textarea className="w-full bg-[color:var(--bg)] border border-black/10 rounded-xl px-4 py-3 h-28 resize-none focus:outline-none focus:border-[color:var(--teal)]" placeholder="Tell us what you want to improve..." />
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-4">
+              <Link to="/booking" className="bg-[color:var(--teal)] text-white px-7 py-3 rounded-xl font-bold hover:bg-[color:var(--dk)] transition">
+                Go to Booking Page →
+              </Link>
+              <Link to="/faq" className="border-2 border-[color:var(--teal)] text-[color:var(--teal)] px-7 py-3 rounded-xl font-bold hover:bg-[color:var(--soft)] transition">
+                Read FAQs →
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>

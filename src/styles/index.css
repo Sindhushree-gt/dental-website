@@ -2,8 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --teal: #3e7a52;
+  --dk: #2f5d3a;
+  --deep: #1e3d26;
+  --bg: #f8f7f4;
+  --soft: #eff4f0;
+  --txt: #1f2937;
+  --muted: #6b7280;
+}
+
 body {
-  @apply bg-slate-50 text-slate-900;
+  background: var(--bg);
+  color: var(--txt);
 }
 
 .font-serif {

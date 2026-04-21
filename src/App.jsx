@@ -1,34 +1,43 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import FloatingWhatsApp from './components/FloatingWhatsApp';
+
+import Chatbot from './components/Chatbot';
+
+// Pages
 import Home from './pages/Home';
 import SmileDesigning from './pages/SmileDesigning';
 import AlignersBraces from './pages/AlignersBraces';
 import DentalImplants from './pages/DentalImplants';
-import { Login, Register, Booking, Results, Assessment } from './pages/Placeholders';
+import BookingPage from './pages/BookingPage';
+import AssessmentPage from './pages/Assessment';
+import ResultsPage from './pages/Results';
+import FAQPage from './pages/FAQ';
 import ImageUpload from './components/ImageUpload';
-import FloatingWhatsApp from './components/FloatingWhatsApp';
-import StickyBooking from './components/StickyBooking';
+import { Login, Register } from './pages/Placeholders';
 
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/smile-designing" element={<SmileDesigning />} />
         <Route path="/aligners-braces" element={<AlignersBraces />} />
         <Route path="/dental-implants" element={<DentalImplants />} />
+        <Route path="/booking" element={<BookingPage />} />
+        <Route path="/assessment" element={<AssessmentPage />} />
+        <Route path="/results" element={<ResultsPage />} />
+        <Route path="/faq" element={<FAQPage />} />
+        <Route path="/ai-preview" element={<ImageUpload />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/booking" element={<Booking />} />
-        <Route path="/results" element={<Results />} />
-        <Route path="/assessment" element={<Assessment />} />
-        <Route path="/ai-preview" element={<ImageUpload />} />
         <Route path="*" element={<Home />} />
       </Routes>
       <FloatingWhatsApp />
-      <StickyBooking />
+
+      <Chatbot />
     </Router>
   );
 }

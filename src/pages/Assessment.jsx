@@ -1,0 +1,293 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+
+const AssessmentPage = () => {
+  const [step, setStep] = useState(1);
+  const [answers, setAnswers] = useState({
+    smile: '',
+    teeth: '',
+    missingTeeth: 0,
+    brushing: 'twice',
+    issue: ''
+  });
+  const [recommendation, setRecommendation] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleAnswer = (key, value) => {
+    setAnswers(prev => ({ ...prev, [key]: value }));
+  };
+
+  const nextStep = () => {
+    if (step < 5) setStep(step + 1);
+  };
+
+  const prevStep = () => {
+    if (step > 1) setStep(step - 1);
+  };
+
+  const submitAssessment = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post('http://localhost:5000/api/recommend-treatment', { answers });
+      setRecommendation(response.data);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen pt-32 pb-20 px-4 bg-gradient-to-b from-[color:var(--soft)] to-white">
+      <div className="max-w-2xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-serif font-bold text-[color:var(--dk)] mb-4">
+            {recommendation ? 'Your Treatment Plan' : 'Smile Assessment Quiz'}
+          </h1>
+          <p className="text-[color:var(--muted)] text-lg">
+            {recommendation ? 'Based on your answers, here\'s what we recommend' : 'Answer a few quick questions to get personalized recommendations'}
+          </p>
+        </div>
+
+        {recommendation ? (
+          <div className="bg-white rounded-3xl shadow-2xl p-10 border border-black/5">
+            <div className="text-center mb-8">
+              <div className="text-6xl mb-4">🎯</div>
+              <h2 className="text-3xl font-serif font-bold text-[color:var(--dk)] mb-4">
+                Recommended Treatment
+              </h2>
+              <p className="text-xl font-bold text-[color:var(--teal)] mb-8">
+                {recommendation.recommendedTreatment}
+              </p>
+            </div>
+
+            <div className="bg-[color:var(--soft)] rounded-2xl p-6 mb-8 grid md:grid-cols-3 gap-6 border border-black/5">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-[color:var(--dk)] mb-2">
+                  ${recommendation.estimatedCost?.toLocaleString()}
+                </div>
+                <p className="text-[color:var(--muted)]">Estimated Cost</p>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-[color:var(--dk)] mb-2">
+                  {recommendation.timeframe}
+                </div>
+                <p className="text-[color:var(--muted)]">Treatment Duration</p>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-[color:var(--dk)] mb-2">
+                  95%+
+                </div>
+                <p className="text-[color:var(--muted)]">Success Rate</p>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-[color:var(--teal)] to-[color:var(--dk)] rounded-2xl p-6 text-white mb-8">
+              <h3 className="font-bold text-lg mb-4">What happens next?</h3>
+              <ul className="space-y-3">
+                <li>✅ Schedule your free consultation</li>
+                <li>✅ Advanced 3D digital imaging</li>
+                <li>✅ Detailed treatment plan & pricing</li>
+                <li>✅ Flexible payment options available</li>
+              </ul>
+            </div>
+
+            <div className="flex gap-4 flex-col md:flex-row">
+              <button
+                onClick={() => {
+                  setRecommendation(null);
+                  setStep(1);
+                  setAnswers({ smile: '', teeth: '', missingTeeth: 0, brushing: 'twice', issue: '' });
+                }}
+                className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-xl font-bold hover:bg-gray-300 transition"
+              >
+                Retake Quiz
+              </button>
+              <button
+                className="flex-1 bg-[color:var(--teal)] text-white py-3 rounded-xl font-bold hover:bg-[color:var(--dk)] transition"
+              >
+                Book Consultation Now
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl shadow-2xl p-10 border border-black/5">
+            {/* Progress Bar */}
+            <div className="mb-8">
+              <div className="flex justify-between mb-3">
+                <span className="text-sm font-bold text-[color:var(--teal)]">Question {step} of 5</span>
+                <span className="text-sm font-bold text-gray-500">{Math.round((step / 5) * 100)}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-[color:var(--teal)] h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${(step / 5) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+
+            {/* Step 1 */}
+            {step === 1 && (
+              <div>
+                <h2 className="text-2xl font-bold text-[color:var(--dk)] mb-6">How happy are you with your current smile?</h2>
+                <div className="space-y-4">
+                  {[
+                    { value: 'very-happy', label: '😊 Very happy - I love my smile!', classes: 'bg-green-100 border-green-600 text-green-900' },
+                    { value: 'somewhat-happy', label: '🙂 Somewhat happy - It\'s okay', classes: 'bg-yellow-100 border-yellow-600 text-yellow-900' },
+                    { value: 'not-happy', label: '😟 Not happy - I want to improve it', classes: 'bg-red-100 border-red-600 text-red-900' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => handleAnswer('smile', option.value)}
+                      className={`w-full p-4 rounded-xl font-bold border-2 transition text-left ${
+                        answers.smile === option.value
+                          ? option.classes
+                          : 'bg-gray-100 border-gray-300 text-gray-700 hover:border-[color:var(--teal)]'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 2 */}
+            {step === 2 && (
+              <div>
+                <h2 className="text-2xl font-bold text-[color:var(--dk)] mb-6">Which best describes your teeth?</h2>
+                <div className="space-y-4">
+                  {[
+                    { value: 'perfect', label: 'Perfectly aligned', emoji: '😁' },
+                    { value: 'crooked', label: 'Crooked or misaligned', emoji: '↔️' },
+                    { value: 'discolored', label: 'Discolored or stained', emoji: '🟡' },
+                    { value: 'chipped', label: 'Chipped or damaged', emoji: '⚠️' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => handleAnswer('teeth', option.value)}
+                      className={`w-full p-4 rounded-xl font-bold border-2 transition text-left text-lg ${
+                        answers.teeth === option.value
+                          ? 'bg-[color:var(--soft)] border-[color:var(--teal)] text-[color:var(--dk)]'
+                          : 'bg-gray-100 border-gray-300 text-gray-700 hover:border-[color:var(--teal)]'
+                      }`}
+                    >
+                      {option.emoji} {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 3 */}
+            {step === 3 && (
+              <div>
+                <h2 className="text-2xl font-bold text-[color:var(--dk)] mb-6">Do you have any missing teeth?</h2>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex items-center gap-4 mb-4">
+                      <input
+                        type="range"
+                        min="0"
+                        max="32"
+                        value={answers.missingTeeth}
+                        onChange={(e) => handleAnswer('missingTeeth', parseInt(e.target.value))}
+                        className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[color:var(--teal)]"
+                      />
+                      <span className="text-3xl font-bold text-[color:var(--teal)] w-12 text-center">{answers.missingTeeth}</span>
+                    </div>
+                    <p className="text-gray-600 text-sm">Slide to indicate number of missing teeth</p>
+                  </div>
+                  <div className="bg-[color:var(--soft)] p-6 rounded-xl border border-black/5">
+                    <p className="text-lg font-bold text-[color:var(--dk)]">
+                      {answers.missingTeeth === 0
+                        ? '✅ No missing teeth'
+                        : answers.missingTeeth < 5
+                        ? `⚠️ ${answers.missingTeeth} missing teeth - Implants recommended`
+                        : `🦷 ${answers.missingTeeth} missing teeth - Let\'s discuss options`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4 */}
+            {step === 4 && (
+              <div>
+                <h2 className="text-2xl font-bold text-[color:var(--dk)] mb-6">How often do you brush your teeth?</h2>
+                <div className="space-y-4">
+                  {[
+                    { value: 'twice', label: '✅ Twice daily' },
+                    { value: 'once', label: '⚠️ Once daily' },
+                    { value: 'rarely', label: '❌ Rarely or occasionally' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => handleAnswer('brushing', option.value)}
+                      className={`w-full p-4 rounded-xl font-bold border-2 transition text-left ${
+                        answers.brushing === option.value
+                          ? 'bg-[color:var(--soft)] border-[color:var(--teal)] text-[color:var(--dk)]'
+                          : 'bg-gray-100 border-gray-300 text-gray-700 hover:border-[color:var(--teal)]'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 5 */}
+            {step === 5 && (
+              <div>
+                <h2 className="text-2xl font-bold text-[color:var(--dk)] mb-6">Any specific dental concerns?</h2>
+                <textarea
+                  value={answers.issue}
+                  onChange={(e) => handleAnswer('issue', e.target.value)}
+                  rows="5"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[color:var(--teal)] resize-none"
+                  placeholder="E.g., I have sensitive teeth, bad breath, or past dental trauma..."
+                ></textarea>
+              </div>
+            )}
+
+            {/* Navigation Buttons */}
+            <div className="flex gap-4 mt-10">
+              <button
+                onClick={prevStep}
+                disabled={step === 1}
+                className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-xl font-bold hover:bg-gray-300 transition disabled:opacity-50"
+              >
+                ← Back
+              </button>
+              {step < 5 ? (
+                <button
+                  onClick={nextStep}
+                  disabled={
+                    (step === 1 && !answers.smile) ||
+                    (step === 2 && !answers.teeth) ||
+                    (step === 3 && answers.missingTeeth === undefined) ||
+                    (step === 4 && !answers.brushing)
+                  }
+                  className="flex-1 bg-[color:var(--teal)] text-white py-3 rounded-xl font-bold hover:bg-[color:var(--dk)] transition disabled:opacity-50"
+                >
+                  Next →
+                </button>
+              ) : (
+                <button
+                  onClick={submitAssessment}
+                  disabled={loading}
+                  className="flex-1 bg-[color:var(--teal)] text-white py-3 rounded-xl font-bold hover:bg-[color:var(--dk)] transition disabled:opacity-50"
+                >
+                  {loading ? 'Processing...' : 'Get Recommendation 🎯'}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AssessmentPage;

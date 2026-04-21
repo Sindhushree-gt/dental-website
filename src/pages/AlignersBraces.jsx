@@ -1,5 +1,7 @@
 import React from 'react';
 import ServicePage from '../components/ServicePage';
+import alignersBefore from '../images/braces and aligners before.png';
+import alignersAfter from '../images/braces and aligners after.png';
 
 const AlignersBraces = () => {
   const data = {
@@ -17,8 +19,8 @@ const AlignersBraces = () => {
       { title: "Custom Aligners", desc: "Receive your set of custom-made, biologically compatible aligners." },
       { title: "Perfect Smile", desc: "Wear them 22 hours a day and watch your smile transform gradually." }
     ],
-    beforeImg: "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=800&q=80",
-    afterImg: "https://images.unsplash.com/photo-1513412803932-49f9003a7281?w=800&q=80"
+    beforeImg: alignersBefore,
+    afterImg: alignersAfter
   };
 
   return <ServicePage {...data} />;

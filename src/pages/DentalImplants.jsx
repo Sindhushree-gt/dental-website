@@ -1,5 +1,7 @@
 import React from 'react';
 import ServicePage from '../components/ServicePage';
+import implantsBefore from '../images/dental implant before.png';
+import implantsAfter from '../images/dental implant after.png';
 
 const DentalImplants = () => {
   const data = {
@@ -17,8 +19,8 @@ const DentalImplants = () => {
       { title: "Healing Phase", desc: "Wait 3-6 months for the implant to fuse naturally with your jawbone." },
       { title: "Final Crown", desc: "A custom porcelain crown is fitted for a seamless, natural look and feel." }
     ],
-    beforeImg: "https://images.unsplash.com/photo-1627483262769-04d0a1401487?w=800&q=80",
-    afterImg: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&q=80"
+    beforeImg: implantsBefore,
+    afterImg: implantsAfter
   };
 
   return <ServicePage {...data} />;
