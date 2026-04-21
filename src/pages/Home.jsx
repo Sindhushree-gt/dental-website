@@ -27,7 +27,14 @@ const Home = () => {
         from_name: 'SmileVista Dental Website',
         confirm_email: 'true',
         replyto: 'cursorhalesh@gmail.com',
+        name: `${contactData.firstName} ${contactData.lastName}`, 
+        email: contactData.email,
+        message: contactData.message,
         ...contactData
+      }, {
+        headers: {
+          'Accept': 'application/json'
+        }
       });
       setSubmitted(true);
     } catch (error) {

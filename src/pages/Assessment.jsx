@@ -39,8 +39,13 @@ const AssessmentPage = () => {
         from_name: 'SmileVista Dental Website',
         confirm_email: 'true',
         replyto: 'cursorhalesh@gmail.com',
+        name: 'Patient Assessment User',
         recommendation: response.data.recommendedTreatment,
         ...answers
+      }, {
+        headers: {
+          'Accept': 'application/json'
+        }
       });
 
     } catch (error) {

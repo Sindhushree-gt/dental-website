@@ -52,10 +52,16 @@ const BookingPage = () => {
         from_name: 'SmileVista Dental',
         confirm_email: 'true',
         replyto: 'cursorhalesh@gmail.com',
+        name: formData.name,
+        email: formData.email,
         ...formData
       };
       
-      await axios.post('https://api.web3forms.com/submit', web3Data);
+      await axios.post('https://api.web3forms.com/submit', web3Data, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
 
       if (localResponse.data.success) {
         setSubmitted(true);
