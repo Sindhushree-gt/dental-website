@@ -2,12 +2,13 @@ import React from 'react';
 import ServicePage from '../components/ServicePage';
 import smileDesignBefore from '../images/smile design before.png';
 import smileDesignAfter from '../images/smile design after.png';
+import smileDesignBg from '../images/smile desighning background.png';
 
 const SmileDesigning = () => {
   const data = {
     title: "Digital Smile Designing",
     subtitle: "Precision-engineered smile makeovers tailored to your facial features and personality.",
-    heroImg: "https://images.unsplash.com/photo-1629909613654-28a3a7c4bd45?w=1600&q=80",
+    heroImg: smileDesignBg,
     benefits: [
       { icon: "🎨", title: "Aesthetic Harmony", desc: "We align your teeth according to the 'Golden Ratio' for perfect facial symmetry." },
       { icon: "🔬", title: "3D Visualisation", desc: "See your future smile on-screen before we even touch your teeth." },

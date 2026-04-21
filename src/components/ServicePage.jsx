@@ -5,8 +5,9 @@ const ServicePage = ({ title, subtitle, heroImg, benefits, steps, beforeImg, aft
     <div className="bg-[color:var(--bg)] min-h-screen pt-20">
       {/* Hero Section */}
       <section className="relative h-[500px] flex items-center justify-center overflow-hidden">
-        <img src={heroImg} alt={title} className="absolute inset-0 w-full h-full object-cover brightness-50" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--deep)]/80 via-[color:var(--deep)]/55 to-black/10" />
+        <img src={heroImg} alt={title} className="absolute inset-0 w-full h-full object-cover brightness-[0.65] contrast-105" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--deep)]/65 via-[color:var(--deep)]/45 to-black/10" />
+        <div className="absolute inset-0 bg-black/10" />
         <div className="relative text-center text-white px-4">
           <h1 className="text-5xl md:text-6xl font-serif font-bold mb-4">{title}</h1>
           <p className="text-xl max-w-2xl mx-auto opacity-90">{subtitle}</p>

@@ -71,41 +71,6 @@ const translations = {
       subtitle: 'Encuentra respuestas a preguntas comunes sobre nuestros tratamientos'
     }
   },
-  fr: {
-    nav: {
-      home: 'Accueil',
-      services: 'Services',
-      smileDesigning: 'Conception de Sourire',
-      alignersBraces: 'Aligneurs et Appareils Dentaires',
-      dentalImplants: 'Implants Dentaires',
-      aiPreview: 'Aperçu IA',
-      results: 'Résultats',
-      assessment: 'Évaluation',
-      faq: 'FAQ',
-      contact: 'Contact',
-      signIn: 'Se Connecter',
-      register: "S'inscrire",
-      bookAppointment: 'Réserver une Consultation'
-    },
-    home: {
-      heroTitle: 'Où les Sourires Parfaits Sont Créés',
-      heroSubtitle: 'Dentisterie avancée pour les patients du monde entier. Technologie de précision, expertise accréditée et compassion véritable.',
-      bookConsultation: 'Réserver une Consultation Gratuite',
-      viewServices: 'Voir Nos Services'
-    },
-    booking: {
-      title: 'Réservez Votre Consultation',
-      subtitle: 'Consultation initiale gratuite avec nos dentistes experts'
-    },
-    assessment: {
-      title: 'Quiz d\'Évaluation du Sourire',
-      subtitle: 'Répondez à quelques questions pour obtenir des recommandations personnalisées'
-    },
-    faq: {
-      title: 'Questions Fréquemment Posées',
-      subtitle: 'Trouvez des réponses aux questions courantes sur nos traitements'
-    }
-  }
 };
 
 const LanguageContext = createContext();

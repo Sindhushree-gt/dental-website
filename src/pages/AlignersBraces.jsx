@@ -2,12 +2,13 @@ import React from 'react';
 import ServicePage from '../components/ServicePage';
 import alignersBefore from '../images/braces and aligners before.png';
 import alignersAfter from '../images/braces and aligners after.png';
+import alignersBg from '../images/braces and aligners background.jpg';
 
 const AlignersBraces = () => {
   const data = {
     title: "Aligners & Braces",
     subtitle: "Straighten your teeth invisibly and comfortably with world-class clear aligner technology.",
-    heroImg: "https://images.unsplash.com/photo-1588776814546-1ffbb3b89fd1?w=1600&q=80",
+    heroImg: alignersBg,
     benefits: [
       { icon: "✨", title: "Completely Invisible", desc: "No one will know you're wearing them. Clear aligners are virtually undetectable." },
       { icon: "🥗", title: "Eat Anything", desc: "Since they are removable, you don't have any food restrictions during treatment." },
