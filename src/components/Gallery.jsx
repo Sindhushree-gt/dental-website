@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_BASE = 'http://localhost:5000';
+
+function resolveMediaUrl(url) {
+  if (!url) return url;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  if (url.startsWith('/')) return `${API_BASE}${url}`;
+  return `${API_BASE}/${url}`;
+}
+
 const Gallery = ({ onSelectImage }) => {
   const [gallery, setGallery] = useState([]);
   const [filter, setFilter] = useState('all');
@@ -48,12 +57,18 @@ const Gallery = ({ onSelectImage }) => {
           {filteredGallery.map(item => (
             <div
               key={item.id}
-              onClick={() => onSelectImage(item)}
+              onClick={() =>
+                onSelectImage({
+                  ...item,
+                  before: resolveMediaUrl(item.before),
+                  after: resolveMediaUrl(item.after)
+                })
+              }
               className="group cursor-pointer rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition"
             >
               <div className="relative h-64 overflow-hidden">
                 <img
-                  src={item.before}
+                  src={resolveMediaUrl(item.before)}
                   alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />

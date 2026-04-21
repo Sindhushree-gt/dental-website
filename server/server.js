@@ -2,6 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import cron from 'node-cron';
+import jwt from 'jsonwebtoken';
+import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
+import sqlite3 from 'sqlite3';
+import { fileURLToPath } from 'url';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -9,11 +15,153 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// In-memory storage (replace with real DB later)
+// ----------------------------
+// Paths / static
+// ----------------------------
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+app.use('/uploads', express.static(uploadsDir));
+
+// ----------------------------
+// Database (SQLite)
+// ----------------------------
+const dbPath = path.join(__dirname, '..', 'database', 'smilevista.db');
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) fs.mkdirSync(dbDir, { recursive: true });
+
+const db = new sqlite3.Database(dbPath);
+
+const dbRun = (sql, params = []) =>
+  new Promise((resolve, reject) => {
+    db.run(sql, params, function (err) {
+      if (err) return reject(err);
+      resolve({ lastID: this.lastID, changes: this.changes });
+    });
+  });
+
+const dbAll = (sql, params = []) =>
+  new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) return reject(err);
+      resolve(rows);
+    });
+  });
+
+const dbGet = (sql, params = []) =>
+  new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) return reject(err);
+      resolve(row);
+    });
+  });
+
+await dbRun(`
+  CREATE TABLE IF NOT EXISTS leads (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    email TEXT,
+    source TEXT NOT NULL,
+    service TEXT,
+    message TEXT,
+    status TEXT NOT NULL DEFAULT 'new',
+    createdAt TEXT NOT NULL
+  )
+`);
+
+await dbRun(`
+  CREATE TABLE IF NOT EXISTS gallery (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category TEXT NOT NULL,
+    title TEXT NOT NULL,
+    beforeUrl TEXT NOT NULL,
+    afterUrl TEXT NOT NULL,
+    createdAt TEXT NOT NULL
+  )
+`);
+
+// ----------------------------
+// Gallery migration (before/after -> single imageUrl)
+// ----------------------------
+async function ensureGallerySchema() {
+  const info = await dbAll(`PRAGMA table_info(gallery)`);
+  const hasImageUrl = info.some((c) => c.name === 'imageUrl');
+  if (hasImageUrl) return;
+
+  // Migrate old schema to new schema with single imageUrl
+  await dbRun(`
+    CREATE TABLE IF NOT EXISTS gallery_new (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      category TEXT NOT NULL,
+      title TEXT NOT NULL,
+      imageUrl TEXT NOT NULL,
+      createdAt TEXT NOT NULL
+    )
+  `);
+
+  await dbRun(`
+    INSERT INTO gallery_new (id, category, title, imageUrl, createdAt)
+    SELECT id, category, title, COALESCE(beforeUrl, afterUrl, '') as imageUrl, createdAt
+    FROM gallery
+  `);
+
+  await dbRun(`DROP TABLE gallery`);
+  await dbRun(`ALTER TABLE gallery_new RENAME TO gallery`);
+}
+
+await ensureGallerySchema();
+
+// In-memory storage (non-persistent)
 let appointments = [];
 let assessments = [];
-let users = [];
 let chatHistory = [];
+
+// ----------------------------
+// Admin auth (fixed creds)
+// ----------------------------
+const ADMIN_USERNAME = 'admin';
+const ADMIN_PASSWORD = 'admin123';
+const JWT_SECRET = process.env.JWT_SECRET || 'smilevista-dev-secret';
+const JWT_EXPIRES_IN = '7d';
+
+function requireAdmin(req, res, next) {
+  const auth = req.headers.authorization || '';
+  const [type, token] = auth.split(' ');
+  if (type !== 'Bearer' || !token) return res.status(401).json({ success: false, error: 'Unauthorized' });
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    if (payload?.role !== 'admin') return res.status(403).json({ success: false, error: 'Forbidden' });
+    req.admin = payload;
+    return next();
+  } catch (e) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+}
+
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body || {};
+  if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ success: false, error: 'Invalid credentials' });
+  }
+  const token = jwt.sign({ role: 'admin', username }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  return res.json({ success: true, token });
+});
+
+// ----------------------------
+// Uploads (gallery)
+// ----------------------------
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadsDir),
+  filename: (req, file, cb) => {
+    const safeBase = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const unique = `${Date.now()}_${Math.round(Math.random() * 1e9)}`;
+    cb(null, `${unique}_${safeBase}`);
+  }
+});
+const upload = multer({ storage });
 
 // ============================================
 // STEP 3: AI SMILE PREVIEW API
@@ -97,12 +245,38 @@ app.post('/api/appointments', (req, res) => {
 
     appointments.push(appointment);
 
-    res.json({
-        success: true,
-        message: 'Appointment booked successfully!',
-        appointment,
-        confirmationNumber: `APT-${Date.now()}`
-    });
+    // Store as a lead (persistent)
+    dbRun(
+      `INSERT INTO leads (name, phone, email, source, service, message, status, createdAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        name,
+        phone,
+        email || null,
+        'booking',
+        service || null,
+        issue || null,
+        'new',
+        new Date().toISOString()
+      ]
+    )
+      .then(() => {
+        res.json({
+          success: true,
+          message: 'Appointment booked successfully!',
+          appointment,
+          confirmationNumber: `APT-${Date.now()}`
+        });
+      })
+      .catch((error) => {
+        console.error('Lead insert error:', error);
+        res.json({
+          success: true,
+          message: 'Appointment booked successfully!',
+          appointment,
+          confirmationNumber: `APT-${Date.now()}`
+        });
+      });
 });
 
 app.get('/api/appointments', (req, res) => {
@@ -121,12 +295,100 @@ app.get('/api/available-slots', (req, res) => {
 // STEP 6: GALLERY API
 // ============================================
 app.get('/api/gallery', (req, res) => {
-    const gallery = [
-        { id: 1, category: 'smile-designing', title: 'Smile Design Transformation', before: 'https://images.unsplash.com/photo-1600170311833-c2cf5280ce49?w=500&q=80', after: 'https://images.unsplash.com/photo-1629909613654-28a3a7c4bd45?w=500&q=80' },
-        { id: 2, category: 'aligners', title: 'Aligner Treatment Success', before: 'https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=500&q=80', after: 'https://images.unsplash.com/photo-1513412803932-49f9003a7281?w=500&q=80' },
-        { id: 3, category: 'implants', title: 'Implant Crown Placement', before: 'https://images.unsplash.com/photo-1627483262769-04d0a1401487?w=500&q=80', after: 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=500&q=80' }
-    ];
-    res.json({ success: true, gallery });
+    dbAll(`SELECT id, category, title, imageUrl, createdAt FROM gallery ORDER BY id DESC`)
+      .then((rows) => {
+        const gallery = rows.map((r) => ({
+          id: r.id,
+          category: r.category,
+          title: r.title,
+          image: r.imageUrl,
+          createdAt: r.createdAt
+        }));
+        res.json({ success: true, gallery });
+      })
+      .catch((error) => {
+        console.error('Gallery fetch error:', error);
+        res.json({ success: true, gallery: [] });
+      });
+});
+
+// ============================================
+// ADMIN: LEADS API
+// ============================================
+app.get('/api/leads', requireAdmin, (req, res) => {
+  dbAll(`SELECT * FROM leads ORDER BY datetime(createdAt) DESC`)
+    .then((rows) => res.json({ success: true, leads: rows }))
+    .catch((error) => {
+      console.error('Leads fetch error:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch leads' });
+    });
+});
+
+app.patch('/api/leads/:id', requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body || {};
+  if (!status) return res.status(400).json({ success: false, error: 'Missing status' });
+  dbRun(`UPDATE leads SET status = ? WHERE id = ?`, [status, id])
+    .then(() => res.json({ success: true }))
+    .catch((error) => {
+      console.error('Lead update error:', error);
+      res.status(500).json({ success: false, error: 'Failed to update lead' });
+    });
+});
+
+// ============================================
+// ADMIN: GALLERY UPLOAD API
+// ============================================
+app.post(
+  '/api/admin/gallery',
+  requireAdmin,
+  upload.single('image'),
+  (req, res) => {
+    const { category, title } = req.body || {};
+    const imageFile = req.file;
+
+    if (!category || !title || !imageFile) {
+      if (imageFile?.path) fs.unlink(imageFile.path, () => {});
+      return res.status(400).json({ success: false, error: 'Missing required fields/files' });
+    }
+
+    const imageUrl = `/uploads/${imageFile.filename}`;
+    const createdAt = new Date().toISOString();
+
+    dbRun(
+      `INSERT INTO gallery (category, title, imageUrl, createdAt) VALUES (?, ?, ?, ?)`,
+      [category, title, imageUrl, createdAt]
+    )
+      .then(({ lastID }) => {
+        res.json({
+          success: true,
+          item: { id: lastID, category, title, image: imageUrl, createdAt }
+        });
+      })
+      .catch((error) => {
+        console.error('Gallery insert error:', error);
+        fs.unlink(imageFile.path, () => {});
+        res.status(500).json({ success: false, error: 'Failed to save gallery item' });
+      });
+  }
+);
+
+app.delete('/api/admin/gallery/:id', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const item = await dbGet(`SELECT imageUrl FROM gallery WHERE id = ?`, [id]);
+    if (!item) return res.status(404).json({ success: false, error: 'Not found' });
+
+    await dbRun(`DELETE FROM gallery WHERE id = ?`, [id]);
+
+    const imgPath = path.join(uploadsDir, path.basename(item.imageUrl || ''));
+    if (fs.existsSync(imgPath)) fs.unlink(imgPath, () => {});
+
+    return res.json({ success: true });
+  } catch (error) {
+    console.error('Gallery delete error:', error);
+    return res.status(500).json({ success: false, error: 'Failed to delete gallery item' });
+  }
 });
 
 // ============================================

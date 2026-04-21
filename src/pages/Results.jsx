@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_BASE = 'http://localhost:5000';
+
+function resolveMediaUrl(url) {
+  if (!url) return url;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  if (url.startsWith('/')) return `${API_BASE}${url}`;
+  return `${API_BASE}/${url}`;
+}
+
 const ResultsPage = () => {
   const [gallery, setGallery] = useState([]);
   const [filter, setFilter] = useState('all');
-  const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -102,18 +110,17 @@ const ResultsPage = () => {
             {filteredGallery.map(item => (
               <div
                 key={item.id}
-                onClick={() => setSelectedImage(item)}
-                className="group cursor-pointer"
+                className="group"
               >
                 <div className="relative overflow-hidden rounded-2xl shadow-lg mb-4 h-80">
                   <img
-                    src={item.before}
-                    alt="Before"
+                    src={resolveMediaUrl(item.image)}
+                    alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
                     <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-lg font-bold">
-                      Click to compare
+                      View
                     </span>
                   </div>
                 </div>
@@ -126,82 +133,6 @@ const ResultsPage = () => {
           </div>
         )}
       </div>
-
-      {/* Modal - Full Comparison */}
-      {selectedImage && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" onClick={() => setSelectedImage(null)}>
-          <div className="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="flex flex-col md:flex-row">
-              {/* Before */}
-              <div className="md:w-1/2 bg-gray-100 flex flex-col">
-                <div className="flex-1 overflow-hidden">
-                  <img
-                    src={selectedImage.before}
-                    alt="Before"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6 bg-gray-50 border-t border-gray-200 text-center">
-                  <p className="text-gray-500 font-bold">BEFORE</p>
-                </div>
-              </div>
-
-              {/* After */}
-              <div className="md:w-1/2 bg-teal-50 flex flex-col">
-                <div className="flex-1 overflow-hidden">
-                  <img
-                    src={selectedImage.after}
-                    alt="After"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6 bg-[color:var(--soft)] border-t border-black/5 text-center">
-                  <p className="text-[color:var(--dk)] font-bold">AFTER</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Details */}
-            <div className="p-8 border-t border-gray-200">
-              <h2 className="text-2xl font-bold text-[color:var(--dk)] mb-4">{selectedImage.title}</h2>
-              <p className="text-[color:var(--muted)] mb-6">
-                {categories.find(c => c.value === selectedImage.category)?.label}
-              </p>
-
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="bg-green-50 p-4 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-green-600">✅</p>
-                  <p className="text-sm text-gray-600 mt-2">Patient Satisfied</p>
-                </div>
-                <div className="bg-blue-50 p-4 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-blue-600">🎯</p>
-                  <p className="text-sm text-gray-600 mt-2">Treatment Complete</p>
-                </div>
-                <div className="bg-purple-50 p-4 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-purple-600">⭐</p>
-                  <p className="text-sm text-gray-600 mt-2">5-Star Result</p>
-                </div>
-              </div>
-
-              <p className="text-gray-700 mb-6">
-                This patient underwent our comprehensive treatment program and achieved remarkable results. The transformation showcases the power of modern dentistry combined with our personalized approach to each patient's unique needs.
-              </p>
-
-              <div className="flex gap-4 flex-col sm:flex-row">
-                <button
-                  onClick={() => setSelectedImage(null)}
-                  className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-xl font-bold hover:bg-gray-300 transition"
-                >
-                  Close
-                </button>
-                <button className="flex-1 bg-[color:var(--teal)] text-white py-3 rounded-xl font-bold hover:bg-[color:var(--dk)] transition">
-                  Achieve Similar Results
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* CTA Section */}
       <div className="max-w-6xl mx-auto mt-20">

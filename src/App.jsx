@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 
@@ -16,11 +16,15 @@ import ResultsPage from './pages/Results';
 import FAQPage from './pages/FAQ';
 import ImageUpload from './components/ImageUpload';
 import { Login, Register } from './pages/Placeholders';
+import Admin from './pages/Admin';
 
-function App() {
+function AppLayout() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
+
   return (
-    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Navbar />
+    <>
+      {!isAdmin && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/smile-designing" element={<SmileDesigning />} />
@@ -31,13 +35,21 @@ function App() {
         <Route path="/results" element={<ResultsPage />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/ai-preview" element={<ImageUpload />} />
+        <Route path="/admin" element={<Admin />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<Home />} />
       </Routes>
-      <FloatingWhatsApp />
+      {!isAdmin && <FloatingWhatsApp />}
+      {!isAdmin && <Chatbot />}
+    </>
+  );
+}
 
-      <Chatbot />
+function App() {
+  return (
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <AppLayout />
     </Router>
   );
 }
