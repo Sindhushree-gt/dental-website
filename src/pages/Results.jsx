@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const API_BASE = 'http://localhost:5000';
@@ -66,8 +67,29 @@ const ResultsPage = () => {
 
   return (
     <div className="min-h-screen pt-32 pb-20 px-4 bg-gradient-to-b from-white to-[color:var(--soft)]">
+      <div className="max-w-7xl mx-auto flex gap-8">
+        {/* Sidebar */}
+        <div className="w-64 flex-shrink-0">
+          <div className="bg-white rounded-3xl shadow-lg p-8 sticky top-40">
+            <h3 className="text-xs font-bold tracking-[0.3em] uppercase text-[color:var(--teal)] mb-6">Menu</h3>
+            <div className="space-y-3">
+              <Link to="/results" className="block w-full bg-[color:var(--teal)] text-white px-6 py-3 rounded-2xl font-bold hover:bg-[color:var(--dk)] transition-colors text-center">
+                Leads
+              </Link>
+              <Link to="/results" className="block w-full border-2 border-gray-200 text-gray-800 px-6 py-3 rounded-2xl font-bold hover:border-[color:var(--teal)] hover:text-[color:var(--teal)] transition-colors text-center">
+                Gallery
+              </Link>
+              <Link to="/booking" className="block w-full border-2 border-gray-200 text-gray-800 px-6 py-3 rounded-2xl font-bold hover:border-[color:var(--teal)] hover:text-[color:var(--teal)] transition-colors text-center">
+                Booking
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1">
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-16">
+      <div className="mb-16">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-serif font-bold text-[color:var(--dk)] mb-4">Real Results, Real People</h1>
           <p className="text-xl text-[color:var(--muted)] max-w-3xl mx-auto">
@@ -94,7 +116,7 @@ const ResultsPage = () => {
       </div>
 
       {/* Gallery Grid */}
-      <div className="max-w-7xl mx-auto">
+      <div>
         {loading ? (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">⏳</div>
@@ -135,13 +157,15 @@ const ResultsPage = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="max-w-6xl mx-auto mt-20">
+      <div className="mt-20">
         <div className="bg-gradient-to-r from-[color:var(--teal)] to-[color:var(--dk)] rounded-3xl p-12 text-center text-white">
           <h2 className="text-4xl font-serif font-bold mb-4">Your Smile Could Be Next</h2>
           <p className="text-white/80 mb-8 text-lg">Schedule your free consultation and let our experts create your personalized smile transformation plan.</p>
           <button className="bg-white text-[color:var(--dk)] px-10 py-4 rounded-xl font-bold text-lg hover:bg-[color:var(--soft)] transition-colors shadow-lg">
             Start Your Journey Now
           </button>
+        </div>
+      </div>
         </div>
       </div>
     </div>
