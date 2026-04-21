@@ -302,36 +302,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Results Preview CTA */}
-      <section className="py-24 px-6 bg-white">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <div className="text-xs font-bold tracking-[0.3em] uppercase text-[color:var(--teal)] mb-4">Patient results</div>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[color:var(--dk)] leading-tight">
-              Real smiles, <br />
-              <span className="italic text-[color:var(--teal)]">real transformations</span>
-            </h2>
-            <p className="mt-6 text-[color:var(--muted)] leading-relaxed max-w-xl">
-              See before/after comparisons across smile makeovers, aligners, and implant rehabilitation.
-            </p>
-            <div className="mt-10 flex gap-4 flex-wrap">
-              <Link to="/results" className="bg-[color:var(--teal)] text-white px-8 py-3 rounded-xl font-bold hover:bg-[color:var(--dk)] transition">
-                View Results →
-              </Link>
-              <Link to="/booking" className="border-2 border-[color:var(--teal)] text-[color:var(--teal)] px-8 py-3 rounded-xl font-bold hover:bg-[color:var(--soft)] transition">
-                Get a Quote →
-              </Link>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3 rounded-3xl overflow-hidden shadow-2xl shadow-black/10">
-            <img src="https://images.unsplash.com/photo-1627483262769-04d0a1401487?w=900&q=85" alt="Before" className="h-72 w-full object-cover" />
-            <img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=900&q=85" alt="After" className="h-72 w-full object-cover" />
-            <img src="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=900&q=85" alt="Before aligners" className="h-72 w-full object-cover" />
-            <img src="https://images.unsplash.com/photo-1513412803932-49f9003a7281?w=900&q=85" alt="After aligners" className="h-72 w-full object-cover" />
-          </div>
-        </div>
-      </section>
-
       {/* Testimonials */}
       <section className="py-24 px-6 bg-[color:var(--bg)]">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-end">

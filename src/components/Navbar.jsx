@@ -44,7 +44,7 @@ const Navbar = () => {
           </div>
         </div>
         <Link to="/ai-preview" className="hover:text-[color:var(--teal)] transition-colors">AI Preview</Link>
-        <Link to="/results" className="hover:text-[color:var(--teal)] transition-colors">Results</Link>
+        <Link to="/results" className="hover:text-[color:var(--teal)] transition-colors">Gallery</Link>
         <Link to="/assessment" className="hover:text-[color:var(--teal)] transition-colors">Assessment</Link>
         <Link to="/faq" className="hover:text-[color:var(--teal)] transition-colors">FAQ</Link>
         <Link to="#contact" className="hover:text-[color:var(--teal)] transition-colors">Contact</Link>
