@@ -37,8 +37,15 @@ const AssessmentPage = () => {
         access_key: '8f11e73a-2e5f-4578-bb73-52c99d93155f',
         subject: `New Smile Assessment Completed`,
         from_name: 'SmileVista Dental Website',
+        confirm_email: 'true',
+        replyto: 'cursorhalesh@gmail.com',
+        name: 'Patient Assessment User',
         recommendation: response.data.recommendedTreatment,
         ...answers
+      }, {
+        headers: {
+          'Accept': 'application/json'
+        }
       });
 
     } catch (error) {
