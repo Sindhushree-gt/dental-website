@@ -28,8 +28,19 @@ const AssessmentPage = () => {
   const submitAssessment = async () => {
     setLoading(true);
     try {
+      // 1. Get recommendation from local API
       const response = await axios.post('http://localhost:5000/api/recommend-treatment', { answers });
       setRecommendation(response.data);
+
+      // 2. Send notification to Web3Forms
+      await axios.post('https://api.web3forms.com/submit', {
+        access_key: '8f11e73a-2e5f-4578-bb73-52c99d93155f',
+        subject: `New Smile Assessment Completed`,
+        from_name: 'SmileVista Dental Website',
+        recommendation: response.data.recommendedTreatment,
+        ...answers
+      });
+
     } catch (error) {
       console.error('Error:', error);
     } finally {

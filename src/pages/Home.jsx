@@ -1,7 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Home = () => {
+  const [contactData, setContactData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    message: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleContactChange = (e) => {
+    const { name, value } = e.target;
+    setContactData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await axios.post('https://api.web3forms.com/submit', {
+        access_key: '8f11e73a-2e5f-4578-bb73-52c99d93155f',
+        subject: `Contact Inquiry: ${contactData.firstName} ${contactData.lastName}`,
+        from_name: 'SmileVista Dental Website',
+        ...contactData
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Contact error:', error);
+      alert('Error sending message. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="pt-20">
       {/* Hero Section */}
@@ -394,36 +427,96 @@ const Home = () => {
           </div>
 
           <div className="bg-white rounded-3xl p-10 text-[color:var(--txt)] border border-white/20 shadow-2xl shadow-black/20">
-            <h3 className="font-serif text-3xl font-bold text-[color:var(--dk)]">Request an appointment</h3>
-            <p className="text-[color:var(--muted)] mt-2">Quick form for demo purposes (your real booking page is still at /booking).</p>
+            {submitted ? (
+              <div className="text-center py-10">
+                <div className="text-5xl mb-4">🚀</div>
+                <h3 className="text-2xl font-serif font-bold text-[color:var(--dk)] mb-4">Message Sent!</h3>
+                <p className="text-[color:var(--muted)] mb-8">Thank you for reaching out. We'll get back to you shortly.</p>
+                <div className="flex flex-col gap-4">
+                  <a 
+                    href={`https://wa.me/919731065325?text=${encodeURIComponent(
+                      `Hello! I just submitted a contact form on your website. \nName: ${contactData.firstName} ${contactData.lastName} \nEmail: ${contactData.email} \nMessage: ${contactData.message}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-green-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-600 transition flex items-center justify-center gap-2"
+                  >
+                    <span>Follow up on WhatsApp</span>
+                    <span className="text-xl">💬</span>
+                  </a>
+                  <button onClick={() => setSubmitted(false)} className="text-[color:var(--teal)] font-bold">
+                    Send another message
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <h3 className="font-serif text-3xl font-bold text-[color:var(--dk)]">Request an appointment</h3>
+                <p className="text-[color:var(--muted)] mt-2">Fill out this quick form and we'll reach out to schedule your free consultation.</p>
 
-            <div className="mt-8 grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wide text-[color:var(--muted)] mb-2">First name</label>
-                <input className="w-full bg-[color:var(--bg)] border border-black/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[color:var(--teal)]" placeholder="Sarah" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wide text-[color:var(--muted)] mb-2">Last name</label>
-                <input className="w-full bg-[color:var(--bg)] border border-black/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[color:var(--teal)]" placeholder="Johnson" />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-bold uppercase tracking-wide text-[color:var(--muted)] mb-2">Email</label>
-                <input className="w-full bg-[color:var(--bg)] border border-black/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[color:var(--teal)]" placeholder="sarah@example.com" />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-bold uppercase tracking-wide text-[color:var(--muted)] mb-2">Message</label>
-                <textarea className="w-full bg-[color:var(--bg)] border border-black/10 rounded-xl px-4 py-3 h-28 resize-none focus:outline-none focus:border-[color:var(--teal)]" placeholder="Tell us what you want to improve..." />
-              </div>
-            </div>
+                <form onSubmit={handleContactSubmit} className="mt-8 grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wide text-[color:var(--muted)] mb-2">First name</label>
+                    <input 
+                      name="firstName"
+                      value={contactData.firstName}
+                      onChange={handleContactChange}
+                      required
+                      className="w-full bg-[color:var(--bg)] border border-black/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[color:var(--teal)]" 
+                      placeholder="Sarah" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wide text-[color:var(--muted)] mb-2">Last name</label>
+                    <input 
+                      name="lastName"
+                      value={contactData.lastName}
+                      onChange={handleContactChange}
+                      required
+                      className="w-full bg-[color:var(--bg)] border border-black/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[color:var(--teal)]" 
+                      placeholder="Johnson" 
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold uppercase tracking-wide text-[color:var(--muted)] mb-2">Email</label>
+                    <input 
+                      name="email"
+                      type="email"
+                      value={contactData.email}
+                      onChange={handleContactChange}
+                      required
+                      className="w-full bg-[color:var(--bg)] border border-black/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[color:var(--teal)]" 
+                      placeholder="sarah@example.com" 
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold uppercase tracking-wide text-[color:var(--muted)] mb-2">Message</label>
+                    <textarea 
+                      name="message"
+                      value={contactData.message}
+                      onChange={handleContactChange}
+                      className="w-full bg-[color:var(--bg)] border border-black/10 rounded-xl px-4 py-3 h-28 resize-none focus:outline-none focus:border-[color:var(--teal)]" 
+                      placeholder="Tell us what you want to improve..." 
+                    />
+                  </div>
+                  <div className="sm:col-span-2 mt-4">
+                    <button 
+                      type="submit" 
+                      disabled={loading}
+                      className="w-full bg-[color:var(--teal)] text-white py-4 rounded-xl font-bold text-lg hover:bg-[color:var(--dk)] transition-colors disabled:opacity-50"
+                    >
+                      {loading ? 'Sending...' : 'Send Message →'}
+                    </button>
+                  </div>
+                </form>
 
-            <div className="mt-6 flex flex-wrap gap-4">
-              <Link to="/booking" className="bg-[color:var(--teal)] text-white px-7 py-3 rounded-xl font-bold hover:bg-[color:var(--dk)] transition">
-                Go to Booking Page →
-              </Link>
-              <Link to="/faq" className="border-2 border-[color:var(--teal)] text-[color:var(--teal)] px-7 py-3 rounded-xl font-bold hover:bg-[color:var(--soft)] transition">
-                Read FAQs →
-              </Link>
-            </div>
+                <div className="mt-8 pt-8 border-t border-gray-100 flex flex-wrap gap-4">
+                  <Link to="/booking" className="text-[color:var(--teal)] font-bold hover:underline">
+                    Go to Full Booking Page →
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>

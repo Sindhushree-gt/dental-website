@@ -42,18 +42,22 @@ const BookingPage = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/appointments', formData);
-      if (response.data.success) {
+      // 1. Submit to local API (existing logic)
+      const localResponse = await axios.post('http://localhost:5000/api/appointments', formData);
+      
+      // 2. Submit to Web3Forms
+      const web3Data = {
+        access_key: '8f11e73a-2e5f-4578-bb73-52c99d93155f',
+        subject: `New Appointment Booking: ${formData.name}`,
+        from_name: 'SmileVista Dental',
+        ...formData
+      };
+      
+      await axios.post('https://api.web3forms.com/submit', web3Data);
+
+      if (localResponse.data.success) {
         setSubmitted(true);
-        setFormData({
-          name: '',
-          phone: '',
-          email: '',
-          date: '',
-          time: '',
-          service: 'smile-designing',
-          issue: ''
-        });
+        // We keep formData for the "Success" display, but clear it later if needed
       }
     } catch (error) {
       console.error('Booking error:', error);
@@ -82,9 +86,36 @@ const BookingPage = () => {
               <p className="text-gray-700 mb-2"><strong>Time:</strong> {formData.time}</p>
               <p className="text-gray-700"><strong>Service:</strong> {formData.service}</p>
             </div>
-            <button onClick={() => setSubmitted(false)} className="bg-[color:var(--teal)] text-white px-8 py-3 rounded-xl font-bold hover:bg-[color:var(--dk)] transition">
-              Book Another Appointment
-            </button>
+            <div className="flex flex-col gap-4">
+              <a 
+                href={`https://wa.me/919731065325?text=${encodeURIComponent(
+                  `Hello SmileVista! 👋 \n\nI just booked an appointment:\n👤 Name: ${formData.name}\n📆 Date: ${formData.date}\n⏰ Time: ${formData.time}\n🦷 Service: ${formData.service}\n\nPlease confirm!`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-green-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-600 transition flex items-center justify-center gap-2"
+              >
+                <span>Confirm on WhatsApp</span>
+                <span className="text-xl">💬</span>
+              </a>
+              <button 
+                onClick={() => {
+                  setSubmitted(false);
+                  setFormData({
+                    name: '',
+                    phone: '',
+                    email: '',
+                    date: '',
+                    time: '',
+                    service: 'smile-designing',
+                    issue: ''
+                  });
+                }} 
+                className="text-[color:var(--teal)] font-bold hover:underline"
+              >
+                Book Another Appointment
+              </button>
+            </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-2xl p-10 border border-black/5">
