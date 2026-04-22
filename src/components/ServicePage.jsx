@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const ServicePage = ({ title, subtitle, heroImg, benefits, steps, beforeImg, afterImg }) => {
   return (
@@ -95,8 +96,18 @@ const ServicePage = ({ title, subtitle, heroImg, benefits, steps, beforeImg, aft
         <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-6">Ready to Transform Your Smile?</h2>
         <p className="text-white/85 mb-10 max-w-2xl mx-auto">Schedule your zero-cost consultation today and get a personalized 3D treatment plan.</p>
         <div className="flex flex-col md:flex-row gap-4 justify-center">
-          <button className="bg-white text-[color:var(--dk)] px-10 py-4 rounded-xl font-bold text-lg hover:bg-[color:var(--soft)] transition-colors shadow-lg">Book Appointment Now</button>
-          <button className="bg-[color:var(--dk)] text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-[color:var(--deep)] transition-colors border border-white/20">View More Results</button>
+          <Link
+            to="/booking"
+            className="bg-white text-[color:var(--dk)] px-10 py-4 rounded-xl font-bold text-lg hover:bg-[color:var(--soft)] transition-colors shadow-lg"
+          >
+            Book Appointment Now
+          </Link>
+          <Link
+            to="/results"
+            className="bg-[color:var(--dk)] text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-[color:var(--deep)] transition-colors border border-white/20"
+          >
+            View More Results
+          </Link>
         </div>
       </section>
     </div>
