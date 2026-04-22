@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Chatbot = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     { type: 'bot', text: 'Hi! I can help with booking, services, pricing, and FAQs. What do you need?' }
@@ -24,6 +27,16 @@ const Chatbot = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search || '');
+    if (params.get('chat') === '1') {
+      setIsOpen(true);
+      params.delete('chat');
+      const qs = params.toString();
+      navigate({ pathname: location.pathname, search: qs ? `?${qs}` : '' }, { replace: true });
+    }
+  }, [location.pathname, location.search, navigate]);
 
   const sendMessage = async (text) => {
     const msg = String(text || '').trim();

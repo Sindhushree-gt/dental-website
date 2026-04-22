@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const FAQPage = () => {
   const [faqs, setFaqs] = useState([]);
@@ -116,12 +117,18 @@ const FAQPage = () => {
             Our expert team is ready to help. Schedule a free consultation or chat with our AI assistant.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-[color:var(--dk)] px-8 py-3 rounded-xl font-bold hover:bg-[color:var(--soft)] transition">
+            <Link
+              to="/booking"
+              className="bg-white text-[color:var(--dk)] px-8 py-3 rounded-xl font-bold hover:bg-[color:var(--soft)] transition"
+            >
               Schedule Consultation
-            </button>
-            <button className="bg-[color:var(--dk)] border-2 border-white/70 text-white px-8 py-3 rounded-xl font-bold hover:bg-[color:var(--deep)] transition">
+            </Link>
+            <Link
+              to="/?chat=1"
+              className="bg-[color:var(--dk)] border-2 border-white/70 text-white px-8 py-3 rounded-xl font-bold hover:bg-[color:var(--deep)] transition"
+            >
               Chat with AI
-            </button>
+            </Link>
           </div>
         </div>
       </div>
