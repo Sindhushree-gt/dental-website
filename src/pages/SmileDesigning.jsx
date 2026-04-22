@@ -20,8 +20,7 @@ const SmileDesigning = () => {
       { title: "Trial Design", desc: "You try a temporary mockup to ensure you love the look and feel." },
       { title: "Final Reveal", desc: "Premium E-max veneers or bonding are applied for your final look." }
     ],
-    beforeImg: smileDesignBefore,
-    afterImg: smileDesignAfter
+    afterImg: "https://parthadental.com/wp-content/uploads/2022/09/cosmetic-dentistry-750x750.jpg"
   };
 
   return <ServicePage {...data} />;

@@ -66,28 +66,43 @@ const ResultsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-32 pb-20 px-4 bg-gradient-to-b from-white to-[color:var(--soft)]">
-      <div className="max-w-7xl mx-auto flex gap-8">
-        {/* Sidebar */}
-        <div className="w-64 flex-shrink-0">
-          <div className="bg-white rounded-3xl shadow-lg p-8 sticky top-40">
-            <h3 className="text-xs font-bold tracking-[0.3em] uppercase text-[color:var(--teal)] mb-6">Menu</h3>
-            <div className="space-y-3">
-              <Link to="/results" className="block w-full bg-[color:var(--teal)] text-white px-6 py-3 rounded-2xl font-bold hover:bg-[color:var(--dk)] transition-colors text-center">
-                Leads
-              </Link>
-              <Link to="/results" className="block w-full border-2 border-gray-200 text-gray-800 px-6 py-3 rounded-2xl font-bold hover:border-[color:var(--teal)] hover:text-[color:var(--teal)] transition-colors text-center">
-                Gallery
-              </Link>
-              <Link to="/booking" className="block w-full border-2 border-gray-200 text-gray-800 px-6 py-3 rounded-2xl font-bold hover:border-[color:var(--teal)] hover:text-[color:var(--teal)] transition-colors text-center">
-                Booking
-              </Link>
-            </div>
+    <div className="min-h-screen pt-24 bg-[color:var(--bg)] text-[color:var(--txt)]">
+      <div className="max-w-full flex">
+        {/* Deep Green Sidebar */}
+        <aside className="w-80 h-[calc(100vh-96px)] bg-[color:var(--deep)] p-8 sticky top-24 hidden lg:block">
+          <div className="mb-12 px-4">
+            <h2 className="text-3xl font-bold text-white tracking-tight">AdminPanel</h2>
           </div>
-        </div>
+          
+          <nav className="space-y-4">
+            {[
+              { id: 'leads', icon: <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />, label: 'Dashboard', path: '/results', active: true },
+              { id: 'appointments', icon: <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />, label: 'Appointments', path: '/booking' },
+              { id: 'services', icon: <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />, label: 'Services', path: '/smile-designing' },
+              { id: 'doctors', icon: <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />, label: 'Doctors', path: '/' },
+              { id: 'about', icon: <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />, label: 'About Clinic', path: '/faq' },
+              { id: 'contact', icon: <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />, label: 'Contact Us', path: '/#contact' },
+            ].map((item) => (
+              <Link
+                key={item.id}
+                to={item.path}
+                className={`flex items-center gap-4 px-6 py-4 rounded-2xl font-semibold transition-all group ${
+                  item.active 
+                    ? 'bg-white/10 text-white shadow-lg' 
+                    : 'text-white/50 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <svg className={`w-6 h-6 transition-colors ${item.active ? 'text-emerald-400' : 'text-white/30 group-hover:text-emerald-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {item.icon}
+                </svg>
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </aside>
 
         {/* Main Content */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0 bg-[color:var(--bg)] min-h-[calc(100vh-96px)] p-12 lg:p-20 text-[color:var(--txt)]">
       {/* Header */}
       <div className="mb-16">
         <div className="text-center mb-12">

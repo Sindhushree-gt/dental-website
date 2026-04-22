@@ -20,8 +20,7 @@ const DentalImplants = () => {
       { title: "Healing Phase", desc: "Wait 3-6 months for the implant to fuse naturally with your jawbone." },
       { title: "Final Crown", desc: "A custom porcelain crown is fitted for a seamless, natural look and feel." }
     ],
-    beforeImg: implantsBefore,
-    afterImg: implantsAfter
+    afterImg: "https://www.sanmarcosdental.com/blog/wp-content/uploads/implant-diagram.jpeg"
   };
 
   return <ServicePage {...data} />;

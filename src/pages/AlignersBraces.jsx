@@ -20,8 +20,7 @@ const AlignersBraces = () => {
       { title: "Custom Aligners", desc: "Receive your set of custom-made, biologically compatible aligners." },
       { title: "Perfect Smile", desc: "Wear them 22 hours a day and watch your smile transform gradually." }
     ],
-    beforeImg: alignersBefore,
-    afterImg: alignersAfter
+    afterImg: "https://dentistry.uic.edu/wp-content/uploads/sites/741/2020/10/iStock-501427146-1090x595.jpg"
   };
 
   return <ServicePage {...data} />;

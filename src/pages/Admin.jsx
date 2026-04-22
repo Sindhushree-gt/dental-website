@@ -183,65 +183,52 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-[color:var(--bg)]">
+    <div className="min-h-screen bg-[color:var(--bg)] text-[color:var(--txt)]">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-black/5">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[color:var(--teal)] text-white flex items-center justify-center font-bold">
-              S
-            </div>
-            <div>
-              <div className="font-serif text-2xl font-bold text-[color:var(--dk)] leading-none">
-                SmileVista <span className="text-[color:var(--teal)]">Admin</span>
-              </div>
-              <div className="text-xs text-[color:var(--muted)]">Leads & gallery management</div>
-            </div>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-black/5">
+        <div className="max-w-full mx-auto px-10 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-3xl font-bold text-[color:var(--teal)] tracking-tight">AdminPanel</h1>
           </div>
           <button
             onClick={logout}
-            className="px-5 py-2 rounded-xl font-bold bg-[color:var(--teal)] text-white hover:bg-[color:var(--dk)] transition shadow-lg shadow-black/10"
+            className="px-6 py-2.5 rounded-xl font-bold bg-[color:var(--soft)] text-[color:var(--dk)] hover:bg-[color:var(--teal)] hover:text-white transition"
           >
             Logout
           </button>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-[260px_1fr] gap-8">
-          {/* Sidebar */}
-          <aside className="bg-white border border-black/5 rounded-3xl shadow-xl p-4 h-fit">
-            <div className="text-xs font-bold tracking-[0.3em] uppercase text-[color:var(--teal)] px-3 py-2">
-              Menu
-            </div>
-            <nav className="mt-2 space-y-2">
+      <div className="max-w-full flex pt-[88px]">
+        {/* Sidebar */}
+        <aside className="w-80 h-[calc(100vh-88px)] bg-[color:var(--deep)] p-8 sticky top-[88px] hidden lg:block">
+          <nav className="space-y-4">
+            {[
+              { id: 'leads', icon: <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />, label: 'Leads' },
+              { id: 'gallery', icon: <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />, label: 'Gallery' },
+              { id: 'booking', icon: <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />, label: 'Booking' }
+            ].map((item) => (
               <button
-                onClick={() => setTab('leads')}
-                className={[
-                  'w-full text-left px-4 py-3 rounded-2xl font-bold border transition',
-                  tab === 'leads'
-                    ? 'bg-[color:var(--teal)] text-white border-transparent'
-                    : 'bg-white border-black/10 text-[color:var(--dk)] hover:bg-[color:var(--soft)]'
-                ].join(' ')}
+                key={item.id}
+                onClick={() => setTab(item.id)}
+                className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-semibold transition-all group ${
+                  tab === item.id 
+                    ? 'bg-white/10 text-white shadow-lg' 
+                    : 'text-white/50 hover:bg-white/5 hover:text-white'
+                }`}
               >
-                Leads
+                <svg className={`w-6 h-6 transition-colors ${tab === item.id ? 'text-emerald-400' : 'text-white/30 group-hover:text-emerald-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {item.icon}
+                </svg>
+                {item.label}
               </button>
-              <button
-                onClick={() => setTab('gallery')}
-                className={[
-                  'w-full text-left px-4 py-3 rounded-2xl font-bold border transition',
-                  tab === 'gallery'
-                    ? 'bg-[color:var(--teal)] text-white border-transparent'
-                    : 'bg-white border-black/10 text-[color:var(--dk)] hover:bg-[color:var(--soft)]'
-                ].join(' ')}
-              >
-                Gallery
-              </button>
-            </nav>
-          </aside>
+            ))}
+          </nav>
+        </aside>
 
-          {/* Content */}
-          <main className="min-w-0">
+        {/* Content */}
+        <main className="flex-1 min-w-0 bg-[color:var(--bg)] min-h-[calc(100vh-88px)] p-12 lg:p-16 text-[color:var(--txt)]">
+
             {tab === 'leads' && (
           <div className="bg-white border border-black/5 rounded-3xl shadow-xl overflow-hidden">
             <div className="p-6 flex items-center justify-between">
@@ -417,10 +404,23 @@ export default function Admin() {
             </div>
               </div>
             )}
+
+            {tab === 'booking' && (
+              <div className="bg-white border border-black/5 rounded-3xl shadow-xl overflow-hidden">
+                <div className="p-6 flex items-center justify-between">
+                  <div>
+                    <div className="font-bold text-[color:var(--dk)] text-lg">Booking</div>
+                    <div className="text-sm text-[color:var(--muted)]">Manage appointment bookings.</div>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <p className="text-[color:var(--muted)]">Booking management coming soon...</p>
+                </div>
+              </div>
+            )}
           </main>
         </div>
       </div>
-    </div>
-  );
+    );
 }
 

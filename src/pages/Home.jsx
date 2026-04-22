@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import smileImg from '../images/smile design after.png';
+import alignersImg from '../images/braces and aligners after.png';
+import implantsImg from '../images/dental implant after.png';
 
 const Home = () => {
   const [contactData, setContactData] = useState({
@@ -11,6 +14,18 @@ const Home = () => {
   });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash === '#contact') {
+      setTimeout(() => {
+        const element = document.getElementById('contact');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, [location]);
 
   const handleContactChange = (e) => {
     const { name, value } = e.target;
@@ -114,7 +129,7 @@ const Home = () => {
       <section className="grid lg:grid-cols-2">
         <div className="relative min-h-[420px] overflow-hidden">
           <img
-            src="https://images.unsplash.com/photo-1588776814546-1ffbb3b89fd1?w=1400&q=85"
+            src="https://static.vecteezy.com/system/resources/thumbnails/071/062/019/small/dental-checkup-examination-procedure-with-doctor-and-patient-free-photo.jpg"
             alt="Dentist consulting with patient"
             className="absolute inset-0 w-full h-full object-cover"
           />
@@ -175,35 +190,87 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Services Overview */}
-      <section className="py-28 px-6 bg-white">
-        <div className="max-w-7xl mx-auto text-center mb-20">
-          <span className="text-[color:var(--teal)] font-bold uppercase tracking-[0.3em] text-sm mb-4 block">International Standards</span>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-[color:var(--dk)] mb-6">Our Signature Treatments</h2>
-          <p className="text-[color:var(--muted)] max-w-2xl mx-auto text-lg leading-relaxed">
-            From routine care to full smile transformations — every treatment delivered with precision, compassion, and accredited standards.
+      {/* Signature Treatments */}
+      <section className="py-32 px-6 bg-white relative overflow-hidden bg-dot-pattern">
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[color:var(--bg)] to-transparent" />
+        
+        <div className="max-w-7xl mx-auto text-center mb-24 relative z-10">
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-[color:var(--soft)] border border-[color:var(--teal)]/10 text-[color:var(--teal)] text-xs font-bold uppercase tracking-[0.2em] mb-6">
+            <span className="w-2 h-2 rounded-full bg-[color:var(--teal)] animate-pulse" />
+            Signature Treatments
+          </div>
+          <h2 className="text-5xl md:text-6xl font-serif font-bold text-[color:var(--dk)] mb-6 leading-tight">
+            Crafting Your <span className="italic text-gradient">Perfect Smile</span>
+          </h2>
+          <p className="text-[color:var(--muted)] max-w-2xl mx-auto text-lg leading-relaxed font-medium">
+            Where advanced precision meets aesthetic artistry. Explore our most sought‑after dental transformations.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto relative z-10">
           {[
-            { title: "Smile Designing", path: "/smile-designing", icon: "✨", desc: "Digitally planned smile makeovers for perfect proportions." },
-            { title: "Aligners & Braces", path: "/aligners-braces", icon: "🔮", desc: "Invisible correction for perfectly aligned teeth." },
-            { title: "Dental Implants", path: "/dental-implants", icon: "🦷", desc: "Permanent, natural-feeling tooth replacements." }
+            { 
+              title: "Smile Designing", 
+              path: "/smile-designing", 
+              icon: "https://parthadental.com/wp-content/uploads/2022/09/cosmetic-dentistry-750x750.jpg", 
+              isImage: true,
+              desc: "Digital planning for anatomical perfection and facial harmony.",
+              accent: "from-amber-50 to-orange-50",
+              num: "01"
+            },
+            { 
+              title: "Aligners & Braces", 
+              path: "/aligners-braces", 
+              icon: "https://dentistry.uic.edu/wp-content/uploads/sites/741/2020/10/iStock-501427146-1090x595.jpg", 
+              isImage: true,
+              desc: "Discreet orthodontic solutions for a lifetime of confidence.",
+              accent: "from-blue-50 to-indigo-50",
+              num: "02"
+            },
+            { 
+              title: "Dental Implants", 
+              path: "/dental-implants", 
+              icon: "https://www.sanmarcosdental.com/blog/wp-content/uploads/implant-diagram.jpeg", 
+              isImage: true,
+              desc: "Bio-compatible restorations that feel and function like natural teeth.",
+              accent: "from-emerald-50 to-teal-50",
+              num: "03"
+            }
           ].map((service, i) => (
             <Link
               key={i}
               to={service.path}
-              className="group p-10 bg-[color:var(--bg)] rounded-[2.5rem] border border-black/5 hover:bg-white hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 no-underline text-left"
+              className="group relative p-10 bg-white rounded-[3rem] border border-black/5 hover:border-[color:var(--teal)]/20 premium-shadow premium-shadow-hover hover-lift transition-all duration-500 no-underline text-left overflow-hidden flex flex-col"
             >
-              <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center text-3xl mb-8 group-hover:scale-110 group-hover:-rotate-6 transition-transform">
-                {service.icon}
+              {/* Decorative Number */}
+              <div className="absolute top-8 right-10 text-6xl font-serif font-bold text-black/[0.03] group-hover:text-[color:var(--teal)]/[0.05] transition-colors">
+                {service.num}
               </div>
-              <h3 className="text-2xl font-serif font-bold text-[color:var(--dk)] mb-4">{service.title}</h3>
-              <p className="text-[color:var(--muted)] mb-8 leading-relaxed">{service.desc}</p>
-              <div className="text-[color:var(--teal)] font-bold flex items-center gap-2 group-hover:gap-4 transition-all">
-                Learn More <span>→</span>
+
+              {/* Image Icon Wrapper */}
+              <div className="w-32 h-32 rounded-[2.5rem] shadow-lg shadow-black/5 border border-black/10 flex items-center justify-center overflow-hidden mb-10 group-hover:scale-110 transition-all duration-500 bg-white">
+                <img src={service.icon} alt={service.title} className="w-full h-full object-cover" />
               </div>
+
+              <div className="relative z-10 flex flex-col flex-grow">
+                <h3 className="text-3xl font-serif font-bold text-[color:var(--dk)] mb-4">{service.title}</h3>
+                <p className="text-[color:var(--muted)] mb-10 leading-relaxed font-medium min-h-[4.5rem]">
+                  {service.desc}
+                </p>
+                
+                <div className="mt-auto pt-6 border-t border-black/5 flex items-center justify-between">
+                  <span className="text-[color:var(--teal)] font-bold flex items-center gap-2 text-lg">
+                    Discover More 
+                    <span className="group-hover:translate-x-2 transition-transform duration-300">→</span>
+                  </span>
+                  <div className="w-10 h-10 rounded-full border border-black/5 flex items-center justify-center group-hover:bg-[color:var(--soft)] group-hover:border-transparent transition-colors">
+                    <svg className="w-4 h-4 text-[color:var(--teal)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Background Accent Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-transparent to-[color:var(--soft)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
             </Link>
           ))}
         </div>
@@ -399,7 +466,7 @@ const Home = () => {
       </section>
 
       {/* Contact CTA */}
-      <section className="py-24 px-6 bg-gradient-to-br from-[color:var(--deep)] to-[color:var(--dk)] text-white">
+      <section id="contact" className="py-24 px-6 bg-gradient-to-br from-[color:var(--deep)] to-[color:var(--dk)] text-white">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-14 items-start">
           <div>
             <div className="text-xs font-bold tracking-[0.3em] uppercase text-[#C9A24A] mb-4">Get in touch</div>
