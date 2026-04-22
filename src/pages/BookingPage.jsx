@@ -76,9 +76,26 @@ const BookingPage = () => {
             {emailStatus ? (
               <p className="text-sm mb-6">
                 <strong>Email:</strong>{' '}
-                {emailStatus.sent
-                  ? 'Confirmation email sent.'
-                  : `Not sent (${emailStatus.reason || 'unknown'}).`}
+                {emailStatus.sent ? (
+                  <>
+                    Confirmation email sent.
+                    {emailStatus.mode === 'ethereal' && emailStatus.previewUrl ? (
+                      <>
+                        {' '}
+                        <a
+                          href={emailStatus.previewUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[color:var(--teal)] font-bold hover:underline"
+                        >
+                          View email preview
+                        </a>
+                      </>
+                    ) : null}
+                  </>
+                ) : (
+                  `Not sent (${emailStatus.reason || 'unknown'}).`
+                )}
               </p>
             ) : null}
             <div className="bg-white rounded-2xl p-6 mb-6 text-left">

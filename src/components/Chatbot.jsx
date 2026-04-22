@@ -8,6 +8,13 @@ const Chatbot = () => {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [suggestedReplies, setSuggestedReplies] = useState([
+    'Treatments',
+    'Book appointment',
+    'Pricing',
+    'FAQ',
+    'Contact'
+  ]);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -18,31 +25,37 @@ const Chatbot = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
+  const sendMessage = async (text) => {
+    const msg = String(text || '').trim();
+    if (!msg) return;
 
-    // Add user message
-    setMessages(prev => [...prev, { type: 'user', text: input }]);
-    setInput('');
+    setMessages((prev) => [...prev, { type: 'user', text: msg }]);
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/chat', { message: input });
-      setMessages(prev => [...prev, { type: 'bot', text: response.data.reply }]);
+      const response = await axios.post('http://localhost:5000/api/chat', { message: msg });
+      const replyText = response?.data?.reply || 'Sorry, I could not generate a response.';
+      setMessages((prev) => [...prev, { type: 'bot', text: replyText }]);
+      if (Array.isArray(response?.data?.quickReplies) && response.data.quickReplies.length) {
+        setSuggestedReplies(response.data.quickReplies.slice(0, 6));
+      }
     } catch (error) {
-      setMessages(prev => [...prev, { type: 'bot', text: 'Sorry, I couldn\'t process that. Please try again or contact our team.' }]);
+      setMessages((prev) => [
+        ...prev,
+        { type: 'bot', text: "Sorry, I couldn't process that. Please try again or contact our team." }
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
-  const quickReplies = [
-    'Tell me about treatments',
-    'How do I book?',
-    'What are your costs?',
-    'Emergency support'
-  ];
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!input.trim() || loading) return;
+    const text = input;
+    setInput('');
+    await sendMessage(text);
+  };
 
   return (
     <div className="fixed bottom-6 right-6 z-40 font-sans">
@@ -93,28 +106,22 @@ const Chatbot = () => {
           </div>
 
           {/* Quick Replies */}
-          {messages.length <= 1 && (
-            <div className="px-4 py-2 border-t border-gray-200">
-              <p className="text-xs text-gray-500 mb-2">Quick replies:</p>
-              <div className="grid grid-cols-2 gap-2">
-                {quickReplies.map((reply, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      setInput(reply);
-                      setMessages(prev => [...prev, { type: 'user', text: reply }]);
-                      setTimeout(() => {
-                        setMessages(prev => [...prev, { type: 'bot', text: 'Thanks for asking! This is a helpful response.' }]);
-                      }, 500);
-                    }}
-                    className="text-xs bg-[color:var(--soft)] text-[color:var(--dk)] p-2 rounded hover:bg-white transition font-medium border border-black/5"
-                  >
-                    {reply}
-                  </button>
-                ))}
-              </div>
+          <div className="px-4 py-2 border-t border-gray-200 bg-white">
+            <p className="text-xs text-gray-500 mb-2">Suggested:</p>
+            <div className="flex flex-wrap gap-2">
+              {suggestedReplies.map((reply, idx) => (
+                <button
+                  key={`${reply}-${idx}`}
+                  type="button"
+                  onClick={() => sendMessage(reply)}
+                  disabled={loading}
+                  className="text-xs bg-[color:var(--soft)] text-[color:var(--dk)] px-3 py-2 rounded-full hover:bg-white transition font-semibold border border-black/5 disabled:opacity-50"
+                >
+                  {reply}
+                </button>
+              ))}
             </div>
-          )}
+          </div>
 
           {/* Input */}
           <form onSubmit={handleSendMessage} className="border-t border-gray-200 p-4 flex gap-2">
