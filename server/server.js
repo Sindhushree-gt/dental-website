@@ -382,6 +382,18 @@ app.post('/api/recommend-treatment', (req, res) => {
 // ============================================
 // STEP 5: APPOINTMENTS API
 // ============================================
+const AVAILABLE_SLOTS = [
+  '10:00 AM',
+  '10:30 AM',
+  '11:00 AM',
+  '11:30 AM',
+  '2:00 PM',
+  '2:30 PM',
+  '3:00 PM',
+  '3:30 PM',
+  '4:00 PM'
+];
+
 app.post('/api/appointments', async (req, res) => {
   const { name, phone, email, date, time, service, issue } = req.body;
 
@@ -446,11 +458,7 @@ app.get('/api/appointments', (req, res) => {
 });
 
 app.get('/api/available-slots', (req, res) => {
-    const slots = [
-        '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
-        '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM'
-    ];
-    res.json({ success: true, slots });
+    res.json({ success: true, slots: AVAILABLE_SLOTS });
 });
 
 // ============================================
@@ -571,6 +579,8 @@ const CLINIC = {
   ]
 };
 
+const CHATBOT_VERSION = '2026-04-22-slots-v1';
+
 const FAQS = [
   {
     id: 1,
@@ -684,7 +694,16 @@ function answerFor(text) {
   }
 
   // Direct intents
-  if (includesAny(t, ['book', 'booking', 'appointment', 'slot', 'schedule'])) {
+  if (includesAny(t, ['time slot', 'time slots', 'available slots', 'available times', 'slots', 'timing', 'timings'])) {
+    const slotList = AVAILABLE_SLOTS.map((s) => `- ${s}`).join('\n');
+    return {
+      reply:
+        `Available time slots (today’s standard schedule):\n${slotList}\n\nTo pick one, open ${CLINIC.bookingPath} and select a date + slot.`,
+      intent: 'booking'
+    };
+  }
+
+  if (includesAny(t, ['book', 'booking', 'appointment', 'schedule'])) {
     return {
       reply:
         `To book, open ${CLINIC.bookingPath} and choose a service, date, and time slot.\n\nIf you prefer WhatsApp: wa.me/${CLINIC.whatsappNumber}`,
@@ -788,7 +807,7 @@ app.post('/api/chat', (req, res) => {
   const chat = { message, reply, intent, timestamp: new Date() };
   chatHistory.push(chat);
 
-  res.json({ success: true, reply, quickReplies, intent });
+  res.json({ success: true, reply, quickReplies, intent, chatbotVersion: CHATBOT_VERSION });
 });
 
 // ============================================

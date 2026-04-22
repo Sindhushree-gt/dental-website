@@ -4,13 +4,13 @@ import axios from 'axios';
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { type: 'bot', text: 'Hello. I am SmileVista Assistant. How can I help you today?' }
+    { type: 'bot', text: 'Hi! I can help with booking, services, pricing, and FAQs. What do you need?' }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [suggestedReplies, setSuggestedReplies] = useState([
-    'Treatments',
     'Book appointment',
+    'Treatments',
     'Pricing',
     'FAQ',
     'Contact'
@@ -34,6 +34,10 @@ const Chatbot = () => {
 
     try {
       const response = await axios.post('http://localhost:5000/api/chat', { message: msg });
+      if (response?.data?.chatbotVersion) {
+        // Helps confirm the backend is restarted and updated
+        console.debug('chatbotVersion:', response.data.chatbotVersion);
+      }
       const replyText = response?.data?.reply || 'Sorry, I could not generate a response.';
       setMessages((prev) => [...prev, { type: 'bot', text: replyText }]);
       if (Array.isArray(response?.data?.quickReplies) && response.data.quickReplies.length) {
@@ -60,10 +64,11 @@ const Chatbot = () => {
   return (
     <div className="fixed bottom-6 right-6 z-40 font-sans">
       {isOpen && (
-        <div className="bg-white rounded-2xl shadow-2xl w-96 max-w-[calc(100vw-2rem)] flex flex-col h-[600px] mb-4 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <div className="bg-white rounded-2xl shadow-2xl w-96 max-w-[calc(100vw-2rem)] flex flex-col h-[560px] mb-4 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
           {/* Header */}
-          <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-cyan-950 p-6 text-white border-b border-white/10">
-            <div className="flex items-center gap-3">
+          <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-cyan-950 px-5 py-4 text-white border-b border-white/10">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center shadow-[0_0_0_1px_rgba(255,255,255,0.06)]">
                 <svg viewBox="0 0 24 24" className="w-6 h-6 text-cyan-200" fill="currentColor" aria-hidden="true">
                   <path d="M12 2a1 1 0 0 1 1 1v1.06A7.002 7.002 0 0 1 19 11v5a4 4 0 0 1-4 4h-1v1a1 1 0 1 1-2 0v-1h-2v1a1 1 0 1 1-2 0v-1H7a4 4 0 0 1-4-4v-5a7.002 7.002 0 0 1 6-6.94V3a1 1 0 0 1 1-1h2ZM5 11v5a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-5a5 5 0 0 0-5-5h-2a5 5 0 0 0-5 5Zm4 1a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 9 12Zm6 0a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 15 12Z" />
@@ -71,13 +76,22 @@ const Chatbot = () => {
               </div>
               <div>
                 <h3 className="font-bold text-lg tracking-wide">SmileVista Assistant</h3>
-                <p className="text-sm text-white/70">Automated support • replies in minutes</p>
+                <p className="text-xs text-white/70">Quick answers • booking • pricing • FAQs</p>
               </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/15 border border-white/10 transition flex items-center justify-center"
+                aria-label="Close chat"
+              >
+                ✕
+              </button>
             </div>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gradient-to-b from-white to-[color:var(--soft)]/40">
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
@@ -106,22 +120,23 @@ const Chatbot = () => {
           </div>
 
           {/* Quick Replies */}
-          <div className="px-4 py-2 border-t border-gray-200 bg-white">
-            <p className="text-xs text-gray-500 mb-2">Suggested:</p>
-            <div className="flex flex-wrap gap-2">
-              {suggestedReplies.map((reply, idx) => (
-                <button
-                  key={`${reply}-${idx}`}
-                  type="button"
-                  onClick={() => sendMessage(reply)}
-                  disabled={loading}
-                  className="text-xs bg-[color:var(--soft)] text-[color:var(--dk)] px-3 py-2 rounded-full hover:bg-white transition font-semibold border border-black/5 disabled:opacity-50"
-                >
-                  {reply}
-                </button>
-              ))}
+          {!loading && !input.trim() && suggestedReplies?.length ? (
+            <div className="px-4 py-2 border-t border-gray-200 bg-white">
+              <p className="text-xs text-gray-500 mb-2">Suggested</p>
+              <div className="grid grid-cols-2 gap-2">
+                {suggestedReplies.slice(0, 4).map((reply, idx) => (
+                  <button
+                    key={`${reply}-${idx}`}
+                    type="button"
+                    onClick={() => sendMessage(reply)}
+                    className="text-xs bg-[color:var(--soft)] text-[color:var(--dk)] px-3 py-2 rounded-xl hover:bg-white transition font-semibold border border-black/5 text-left"
+                  >
+                    {reply}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : null}
 
           {/* Input */}
           <form onSubmit={handleSendMessage} className="border-t border-gray-200 p-4 flex gap-2">
@@ -129,7 +144,7 @@ const Chatbot = () => {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
+              placeholder="Ask about booking, pricing, services…"
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[color:var(--teal)] text-sm"
               disabled={loading}
             />
