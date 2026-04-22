@@ -4,7 +4,7 @@ import axios from 'axios';
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { type: 'bot', text: 'Hello! 👋 I\'m SmileVista\'s AI assistant. How can I help you today?' }
+    { type: 'bot', text: 'Hello. I am SmileVista Assistant. How can I help you today?' }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -49,9 +49,18 @@ const Chatbot = () => {
       {isOpen && (
         <div className="bg-white rounded-2xl shadow-2xl w-96 max-w-[calc(100vw-2rem)] flex flex-col h-[600px] mb-4 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
           {/* Header */}
-          <div className="bg-gradient-to-r from-[color:var(--teal)] to-[color:var(--dk)] p-6 text-white">
-            <h3 className="font-bold text-lg">SmileVista Assistant</h3>
-            <p className="text-sm opacity-90">We typically reply in minutes</p>
+          <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-cyan-950 p-6 text-white border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center shadow-[0_0_0_1px_rgba(255,255,255,0.06)]">
+                <svg viewBox="0 0 24 24" className="w-6 h-6 text-cyan-200" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2a1 1 0 0 1 1 1v1.06A7.002 7.002 0 0 1 19 11v5a4 4 0 0 1-4 4h-1v1a1 1 0 1 1-2 0v-1h-2v1a1 1 0 1 1-2 0v-1H7a4 4 0 0 1-4-4v-5a7.002 7.002 0 0 1 6-6.94V3a1 1 0 0 1 1-1h2ZM5 11v5a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-5a5 5 0 0 0-5-5h-2a5 5 0 0 0-5 5Zm4 1a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 9 12Zm6 0a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 15 12Z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-bold text-lg tracking-wide">SmileVista Assistant</h3>
+                <p className="text-sm text-white/70">Automated support • replies in minutes</p>
+              </div>
+            </div>
           </div>
 
           {/* Messages */}
@@ -131,9 +140,16 @@ const Chatbot = () => {
       {/* Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-[color:var(--teal)] text-white rounded-full p-4 shadow-lg hover:bg-[color:var(--dk)] transition-all hover:scale-110 flex items-center justify-center w-16 h-16"
+        className="rounded-full p-4 shadow-lg transition-all hover:scale-110 flex items-center justify-center w-16 h-16 border border-white/10 bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950 text-white shadow-[0_10px_30px_rgba(0,0,0,0.35),0_0_0_1px_rgba(255,255,255,0.06)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.38),0_0_0_1px_rgba(34,211,238,0.25)]"
+        title={isOpen ? 'Close assistant' : 'Open assistant'}
       >
-        {isOpen ? '✕' : '💬'}
+        {isOpen ? (
+          <span className="text-xl leading-none">✕</span>
+        ) : (
+          <svg viewBox="0 0 24 24" className="w-7 h-7 text-cyan-200" fill="currentColor" aria-hidden="true">
+            <path d="M12 2a1 1 0 0 1 1 1v1.06A7.002 7.002 0 0 1 19 11v5a4 4 0 0 1-4 4h-1v1a1 1 0 1 1-2 0v-1h-2v1a1 1 0 1 1-2 0v-1H7a4 4 0 0 1-4-4v-5a7.002 7.002 0 0 1 6-6.94V3a1 1 0 0 1 1-1h2ZM5 11v5a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-5a5 5 0 0 0-5-5h-2a5 5 0 0 0-5 5Zm4 1a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 9 12Zm6 0a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 15 12Z" />
+          </svg>
+        )}
       </button>
     </div>
   );

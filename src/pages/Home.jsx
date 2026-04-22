@@ -82,10 +82,7 @@ const Home = () => {
           </p>
           <div className="flex flex-wrap gap-4">
             <Link to="/booking" className="bg-[color:var(--teal)] text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-[color:var(--dk)] transition-all shadow-xl shadow-black/30 active:scale-95">
-              Book Free Consultation
-            </Link>
-            <Link to="/smile-designing" className="bg-white/10 backdrop-blur-md border border-white/25 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-white/15 transition-all no-underline">
-              View Our Services
+              Book Consultation
             </Link>
           </div>
 
