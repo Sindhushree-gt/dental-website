@@ -14,6 +14,7 @@ const BookingPage = () => {
   const [availableSlots, setAvailableSlots] = useState([]);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [emailStatus, setEmailStatus] = useState(null);
 
   useEffect(() => {
     fetchAvailableSlots();
@@ -44,24 +45,8 @@ const BookingPage = () => {
     try {
       // 1. Submit to local API (existing logic)
       const localResponse = await axios.post('http://localhost:5000/api/appointments', formData);
-      
-      // 2. Submit to Web3Forms
-      const web3Data = {
-        access_key: '8f11e73a-2e5f-4578-bb73-52c99d93155f',
-        subject: `New Appointment Booking: ${formData.name}`,
-        from_name: 'SmileVista Dental',
-        confirm_email: 'true',
-        replyto: 'cursorhalesh@gmail.com',
-        name: formData.name,
-        email: formData.email,
-        ...formData
-      };
-      
-      await axios.post('https://api.web3forms.com/submit', web3Data, {
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
+
+      setEmailStatus(localResponse?.data?.emailStatus || null);
 
       if (localResponse.data.success) {
         setSubmitted(true);
@@ -88,6 +73,14 @@ const BookingPage = () => {
             <div className="text-6xl mb-4">✅</div>
             <h2 className="text-3xl font-serif font-bold text-green-900 mb-4">Appointment Confirmed!</h2>
             <p className="text-green-700 mb-6">We've received your booking request. Our team will confirm your appointment within 2 hours via phone/email.</p>
+            {emailStatus ? (
+              <p className="text-sm mb-6">
+                <strong>Email:</strong>{' '}
+                {emailStatus.sent
+                  ? 'Confirmation email sent.'
+                  : `Not sent (${emailStatus.reason || 'unknown'}).`}
+              </p>
+            ) : null}
             <div className="bg-white rounded-2xl p-6 mb-6 text-left">
               <p className="text-gray-700 mb-2"><strong>Name:</strong> {formData.name || 'Pending'}</p>
               <p className="text-gray-700 mb-2"><strong>Date:</strong> {formData.date}</p>
@@ -109,6 +102,7 @@ const BookingPage = () => {
               <button 
                 onClick={() => {
                   setSubmitted(false);
+                  setEmailStatus(null);
                   setFormData({
                     name: '',
                     phone: '',
@@ -162,6 +156,7 @@ const BookingPage = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                required
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[color:var(--teal)]"
                 placeholder="your@email.com"
               />

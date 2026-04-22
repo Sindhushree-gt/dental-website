@@ -73,6 +73,7 @@ dental-website/
 - **Calendar Integration** with available slots
 - Backend API: `POST /api/appointments`, `GET /api/available-slots`
 - Confirmation system
+- **Email confirmation to patient** (optional SMTP via Nodemailer)
 
 ### ✅ STEP 6: Before & After Gallery
 - **Gallery Page** with filters
@@ -258,11 +259,20 @@ CREATE TABLE IF NOT EXISTS ai_leads (
 - **WhatsApp Number**: Update in `FloatingWhatsApp.jsx` (currently: 1234567890)
 - **Database**: Configure in `server.js` when connecting to real MySQL
 - **API URLs**: Currently `http://localhost:5000` - update for production
+- **Email (SMTP)**: To send booking confirmations to the patient, set environment variables for the backend:
+  - **SMTP_HOST**: SMTP server host (example: `smtp.gmail.com`)
+  - **SMTP_PORT**: SMTP port (example: `587`)
+  - **SMTP_SECURE**: `true` for SMTPS (usually port 465), otherwise `false`
+  - **SMTP_USER**: SMTP username (often the email address)
+  - **SMTP_PASS**: SMTP password / app password
+  - **SMTP_FROM**: Optional “From” address (defaults to `SMTP_USER`)
+  - **SMTP_SERVICE**: Optional Nodemailer service name (example: `gmail`) instead of host/port
+  - **When email is sent**: The patient email is sent **only when the appointment is confirmed by admin** (not at initial booking).
 
 ### Improvements for Production
 1. Connect to real MySQL database
 2. Add authentication (JWT tokens)
-3. Configure email reminders (Nodemailer)
+3. Configure email (Nodemailer SMTP) for confirmations & reminders
 4. Add file upload handling
 5. Implement real AI model for smile preview
 6. Add payment gateway integration
@@ -274,7 +284,7 @@ CREATE TABLE IF NOT EXISTS ai_leads (
 ### Next Steps
 1. Set up PostgreSQL/MySQL database
 2. Implement user authentication system
-3. Add email notifications
+3. Add/verify email notifications (SMTP env vars)
 4. Connect payment gateway
 5. Deploy to cloud (AWS, Vercel, Heroku)
 6. Set up monitoring and logging

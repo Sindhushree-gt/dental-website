@@ -1,9 +1,11 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import cron from 'node-cron';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
+import nodemailer from 'nodemailer';
 import fs from 'fs';
 import path from 'path';
 import sqlite3 from 'sqlite3';
@@ -14,6 +16,141 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
+
+// ----------------------------
+// Email (SMTP) - for localhost + production
+// ----------------------------
+function getSmtpConfig() {
+  const {
+    SMTP_HOST,
+    SMTP_PORT,
+    SMTP_SECURE,
+    SMTP_USER,
+    SMTP_PASS,
+    SMTP_FROM,
+    SMTP_SERVICE
+  } = process.env;
+
+  const hasService = Boolean(SMTP_SERVICE && SMTP_USER && SMTP_PASS);
+  const hasHost = Boolean(SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS);
+  if (!hasService && !hasHost) return null;
+
+  return {
+    service: SMTP_SERVICE || undefined,
+    host: SMTP_HOST || undefined,
+    port: SMTP_PORT ? Number(SMTP_PORT) : undefined,
+    secure: SMTP_SECURE === 'true',
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+    from: SMTP_FROM || SMTP_USER
+  };
+}
+
+let cachedMailer = null;
+function getMailer() {
+  const cfg = getSmtpConfig();
+  if (!cfg) return null;
+  if (cachedMailer) return cachedMailer;
+
+  const transporter = nodemailer.createTransport({
+    service: cfg.service,
+    host: cfg.host,
+    port: cfg.port,
+    secure: cfg.secure,
+    auth: cfg.auth
+  });
+
+  cachedMailer = { transporter, from: cfg.from };
+  return cachedMailer;
+}
+
+function normalizeEmail(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+async function sendAppointmentConfirmationEmail({ to, appointment, confirmationNumber }) {
+  const mailer = getMailer();
+  const toEmail = normalizeEmail(to);
+  if (!mailer) return { attempted: false, sent: false, reason: 'smtp_not_configured' };
+  if (!toEmail) return { attempted: false, sent: false, reason: 'missing_email' };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(toEmail)) {
+    return { attempted: false, sent: false, reason: 'invalid_email' };
+  }
+
+  const subject = `SmileVista Appointment Confirmation (${confirmationNumber})`;
+  const text = [
+    `Hi ${appointment.name},`,
+    '',
+    'Your appointment has been booked. Here are the details:',
+    '',
+    `Confirmation: ${confirmationNumber}`,
+    `Name: ${appointment.name}`,
+    `Phone: ${appointment.phone}`,
+    `Date: ${appointment.date}`,
+    `Time: ${appointment.time}`,
+    `Service: ${appointment.service || '-'}`,
+    `Issue: ${appointment.issue || '-'}`,
+    '',
+    '— SmileVista Dental'
+  ].join('\n');
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+      <p>Hi <strong>${appointment.name}</strong>,</p>
+      <p>Your appointment has been booked. Here are the details:</p>
+      <table cellpadding="6" cellspacing="0" border="0" style="border-collapse: collapse;">
+        <tr><td><strong>Confirmation</strong></td><td>${confirmationNumber}</td></tr>
+        <tr><td><strong>Name</strong></td><td>${appointment.name}</td></tr>
+        <tr><td><strong>Phone</strong></td><td>${appointment.phone}</td></tr>
+        <tr><td><strong>Date</strong></td><td>${appointment.date}</td></tr>
+        <tr><td><strong>Time</strong></td><td>${appointment.time}</td></tr>
+        <tr><td><strong>Service</strong></td><td>${appointment.service || '-'}</td></tr>
+        <tr><td><strong>Issue</strong></td><td>${appointment.issue || '-'}</td></tr>
+      </table>
+      <p>— SmileVista Dental</p>
+    </div>
+  `;
+
+  try {
+    const info = await mailer.transporter.sendMail({
+      from: mailer.from,
+      to: toEmail,
+      subject,
+      text,
+      html
+    });
+    return { attempted: true, sent: true, messageId: info?.messageId };
+  } catch (error) {
+    console.error('Email send error:', error);
+    return { attempted: true, sent: false, reason: 'send_failed' };
+  }
+}
+
+async function sendReminderEmail({ to, appointment }) {
+  const mailer = getMailer();
+  const toEmail = normalizeEmail(to);
+  if (!mailer || !toEmail) return { sent: false };
+
+  const subject = `Reminder: Your Appointment Tomorrow with SmileVista`;
+  const text = `Hi ${appointment.name}, this is a reminder for your appointment tomorrow, ${appointment.date} at ${appointment.time}. We look forward to seeing you!`;
+  const html = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+      <p>Hi <strong>${appointment.name}</strong>,</p>
+      <p>This is a friendly reminder for your appointment tomorrow:</p>
+      <p><strong>Date:</strong> ${appointment.date}<br>
+      <strong>Time:</strong> ${appointment.time}</p>
+      <p>We look forward to seeing you!</p>
+      <p>— SmileVista Dental</p>
+    </div>
+  `;
+
+  try {
+    await mailer.transporter.sendMail({ from: mailer.from, to: toEmail, subject, text, html });
+    return { sent: true };
+  } catch (error) {
+    console.error('Reminder email error:', error);
+    return { sent: false };
+  }
+}
 
 // ----------------------------
 // Paths / static
@@ -223,30 +360,32 @@ app.post('/api/recommend-treatment', (req, res) => {
 // ============================================
 // STEP 5: APPOINTMENTS API
 // ============================================
-app.post('/api/appointments', (req, res) => {
-    const { name, phone, email, date, time, service, issue } = req.body;
-    
-    if (!name || !phone || !date || !time) {
-        return res.status(400).json({ success: false, error: 'Missing required fields' });
-    }
+app.post('/api/appointments', async (req, res) => {
+  const { name, phone, email, date, time, service, issue } = req.body;
 
-    const appointment = {
-        id: appointments.length + 1,
-        name,
-        phone,
-        email,
-        date,
-        time,
-        service,
-        issue,
-        status: 'pending',
-        createdAt: new Date()
-    };
+  if (!name || !phone || !date || !time) {
+    return res.status(400).json({ success: false, error: 'Missing required fields' });
+  }
 
-    appointments.push(appointment);
+  const appointment = {
+    id: appointments.length + 1,
+    name,
+    phone,
+    email,
+    date,
+    time,
+    service,
+    issue,
+    status: 'pending',
+    createdAt: new Date()
+  };
 
-    // Store as a lead (persistent)
-    dbRun(
+  appointments.push(appointment);
+  const confirmationNumber = `APT-${Date.now()}`;
+
+  // Store as a lead (persistent)
+  try {
+    await dbRun(
       `INSERT INTO leads (name, phone, email, source, service, message, status, createdAt)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
@@ -259,24 +398,25 @@ app.post('/api/appointments', (req, res) => {
         'new',
         new Date().toISOString()
       ]
-    )
-      .then(() => {
-        res.json({
-          success: true,
-          message: 'Appointment booked successfully!',
-          appointment,
-          confirmationNumber: `APT-${Date.now()}`
-        });
-      })
-      .catch((error) => {
-        console.error('Lead insert error:', error);
-        res.json({
-          success: true,
-          message: 'Appointment booked successfully!',
-          appointment,
-          confirmationNumber: `APT-${Date.now()}`
-        });
-      });
+    );
+  } catch (error) {
+    console.error('Lead insert error:', error);
+    // don't fail the booking if lead insert fails
+  }
+
+  const emailStatus = await sendAppointmentConfirmationEmail({
+    to: email,
+    appointment,
+    confirmationNumber
+  });
+
+  return res.json({
+    success: true,
+    message: 'Appointment booked successfully!',
+    appointment,
+    confirmationNumber,
+    emailStatus
+  });
 });
 
 app.get('/api/appointments', (req, res) => {
@@ -448,12 +588,17 @@ app.get('/api/faqs', (req, res) => {
 // STEP 11: REMINDER SYSTEM (Cron Job)
 // ============================================
 // Send reminder emails at 9 AM daily
-cron.schedule('0 9 * * *', () => {
+cron.schedule('0 9 * * *', async () => {
     console.log('📧 Running appointment reminder job...');
-    // In production, send emails via nodemailer
     const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-    const reminders = appointments.filter(apt => apt.date === tomorrow);
-    console.log(`💬 Sending ${reminders.length} reminders for tomorrow...`);
+    
+    // Filter appointments for tomorrow
+    const reminders = appointments.filter(apt => apt.date === tomorrow && apt.email);
+    console.log(`💬 Sending ${reminders.length} reminders for tomorrow (${tomorrow})...`);
+
+    for (const apt of reminders) {
+        await sendReminderEmail({ to: apt.email, appointment: apt });
+    }
 });
 
 // ============================================
